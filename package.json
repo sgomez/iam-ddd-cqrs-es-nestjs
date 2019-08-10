@@ -32,6 +32,7 @@
     "rxjs-compat": "^6.5.2",
     "shallow-equal-object": "^1.1.1",
     "swagger-ui-express": "^4.0.7",
+    "uuid": "^3.3.2",
     "uuid-validate": "^0.0.3",
     "xml2js": "^0.4.19"
   },
@@ -41,6 +42,7 @@
     "@types/jest": "24.0.11",
     "@types/node": "11.13.4",
     "@types/supertest": "2.0.7",
+    "@types/uuid": "^3.4.5",
     "@types/uuid-validate": "^0.0.1",
     "jest": "24.7.1",
     "prettier": "1.17.0",
@@ -50,6 +52,8 @@
     "tsc-watch": "2.2.1",
     "tsconfig-paths": "3.8.0",
     "tslint": "5.16.0",
+    "tslint-config-prettier": "^1.18.0",
+    "tslint-plugin-prettier": "^2.0.1",
     "typescript": "3.4.3"
   },
   "jest": {
