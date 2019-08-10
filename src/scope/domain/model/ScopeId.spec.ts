@@ -14,14 +14,14 @@ describe('ScopeId', () => {
     const voA = ScopeId.fromString(uuidA);
     const voB = ScopeId.fromString(uuidA);
 
-    expect(voA.equals(voB)).toBeTruthy;
+    expect(voA.equals(voB)).toBeTruthy();
   });
 
   it('should be diferent to other vo with other uuid', () => {
     const voA = ScopeId.fromString(uuidA);
     const voB = ScopeId.fromString(uuidB);
 
-    expect(voA.equals(voB)).toBeFalsy;
+    expect(voA.equals(voB)).toBeFalsy();
   });
 
   it('should not accept invalid uuid', () => {

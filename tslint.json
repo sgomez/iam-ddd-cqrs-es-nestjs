@@ -15,7 +15,14 @@
     "arrow-parens": false,
     "object-literal-sort-keys": false,
     "no-implicit-dependencies": false,
-    "no-submodule-imports": false
+    "no-submodule-imports": false,
+    "variable-name": {
+      "options": [
+        "check-format",
+        "allow-leading-underscore",
+        "allow-pascal-case"
+      ]
+    }
   },
   "rulesDirectory": ["tslint-plugin-prettier"]
 }
