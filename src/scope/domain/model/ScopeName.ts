@@ -1,4 +1,4 @@
-import { ValueObject } from '@app/core/ddd';
+import { ValueObject } from '../../../core/ddd';
 
 interface Props {
   value: string;
@@ -13,7 +13,7 @@ export class ScopeName extends ValueObject<Props> {
     return new ScopeName({ value: name });
   }
 
-  public value(): string {
+  get value(): string {
     return this.props.value;
   }
 }

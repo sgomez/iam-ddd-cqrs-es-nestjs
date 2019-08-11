@@ -60,7 +60,7 @@ export class Scope extends AggregateRoot {
   }
 
   private onScopeWasCreated(event: ScopeWasCreated) {
-    this._scopeId = event.scopeId;
+    this._scopeId = event.id;
     this._name = event.name;
     this._alias = event.alias;
     this._isRemoved = false;

@@ -1,7 +1,6 @@
 {
   "compilerOptions": {
     "module": "commonjs",
-    "moduleResolution": "node",
     "declaration": true,
     "removeComments": true,
     "emitDecoratorMetadata": true,
@@ -9,12 +8,12 @@
     "target": "es2017",
     "sourceMap": true,
     "outDir": "./dist",
-    "baseUrl": "./src",
+    "baseUrl": "./",
     "incremental": true,
     "paths": {
-      "@app/*": ["*"]
+      "@app/*": ["./src/*"]
     }
   },
   "exclude": ["node_modules", "dist"],
-  "include": ["./config.js", "./src/**/*"]
+  "include": ["config.ts", "./src/**/*"]
 }

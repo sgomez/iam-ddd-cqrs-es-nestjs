@@ -1,12 +1,10 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
+import { CqrsModule } from '@nestjs/cqrs';
+
 import { EventStoreModule } from './core/eventstore/eventstore.module';
 import { ScopeModule } from './scope/scope.module';
 
 @Module({
-  controllers: [AppController],
-  providers: [AppService],
-  imports: [EventStoreModule.forRoot(), ScopeModule],
+  imports: [EventStoreModule.forRoot(), ScopeModule, CqrsModule],
 })
 export class AppModule {}

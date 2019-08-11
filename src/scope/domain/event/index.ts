@@ -1,6 +1,6 @@
 import { ScopeWasCreated } from './ScopeWasCreated';
-import { ScopeWasRenamed } from './ScopeWasRenamed';
 import { ScopeWasRemoved } from './ScopeWasRemoved';
+import { ScopeWasRenamed } from './ScopeWasRenamed';
 
 export type ScopeEvent = ScopeWasCreated | ScopeWasRenamed | ScopeWasRemoved;
 

@@ -5,7 +5,7 @@ import { ScopeAlias } from '../model/ScopeAlias';
 
 export class ScopeWasCreated implements IEvent {
   constructor(
-    public readonly scopeId: ScopeId,
+    public readonly id: ScopeId,
     public readonly name: ScopeName,
     public readonly alias: ScopeAlias,
   ) {}

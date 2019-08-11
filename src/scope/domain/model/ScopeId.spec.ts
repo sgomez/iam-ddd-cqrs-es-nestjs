@@ -7,7 +7,7 @@ describe('ScopeId', () => {
   it('should be an uuid v4', () => {
     const vo = ScopeId.fromString(uuidA);
 
-    expect(vo.value()).toBe(uuidA);
+    expect(vo.value).toBe(uuidA);
   });
 
   it('should be equal to other vo with the same uuid', () => {
