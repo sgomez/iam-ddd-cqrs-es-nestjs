@@ -1,7 +1,7 @@
 import { Body, Controller, Delete, Post, Put, Query } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiUseTags } from '@nestjs/swagger';
 
-import { RenameScopeDto, ScopeDto } from '../dto/ScopeDto';
+import { RenameScopeDto, ScopeDto } from '../dto';
 import { ScopeService } from '../services/scope.service';
 
 @Controller('scopes')

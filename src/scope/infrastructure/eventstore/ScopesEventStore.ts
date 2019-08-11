@@ -10,11 +10,11 @@ export class ScopeEventStore implements Scopes {
   constructor(private readonly eventStore: EventStore) {}
 
   async get(scopeId: ScopeId): Promise<Scope> {
-    return await this.eventStore.read(Scope, scopeId.value);
+    return this.eventStore.read(Scope, scopeId.value);
   }
 
   async find(scopeId: ScopeId): Promise<Scope> | null {
-    return await this.eventStore.read(Scope, scopeId.value);
+    return this.eventStore.read(Scope, scopeId.value);
   }
 
   save(scope: Scope): void {

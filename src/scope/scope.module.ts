@@ -5,7 +5,11 @@ import { CommandBus, CqrsModule, EventBus } from '@nestjs/cqrs';
 import { EventStore } from '../core/eventstore/eventstore';
 import { EventStoreModule } from '../core/eventstore/eventstore.module';
 import { CommandHandlers } from './application/command';
-import { ScopeWasCreated, ScopeWasRemoved, ScopeWasRenamed } from './domain/event';
+import {
+  ScopeWasCreated,
+  ScopeWasRemoved,
+  ScopeWasRenamed,
+} from './domain/event';
 import { ScopeAlias } from './domain/model/ScopeAlias';
 import { ScopeId } from './domain/model/ScopeId';
 import { ScopeName } from './domain/model/ScopeName';

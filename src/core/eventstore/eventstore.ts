@@ -16,13 +16,6 @@ const eventStoreHostUrl =
     config.EVENT_STORE_SETTINGS.httpPort
   }/streams/`;
 
-class InstanceLoader {
-  static getInstance<T>(context: Object, name: string, ...args: any[]): T {
-    var instance = Object.create(context[name].prototype);
-    instance.constructor.apply(instance, args);
-    return <T>instance;
-  }
-}
 /**
  * @class EventStore
  * @description The EventStore.org bridge. By design, the domain category
@@ -59,6 +52,7 @@ export class EventStore implements IEventPublisher, IMessageSource {
     try {
       await this.client.writeEvent(streamName, type, event, metadata);
     } catch (err) {
+      // tslint:disable-next-line:no-console
       console.trace(err);
     }
   }
@@ -86,6 +80,7 @@ export class EventStore implements IEventPublisher, IMessageSource {
 
       return scope;
     } catch (err) {
+      // tslint:disable-next-line:no-console
       console.trace(err);
     }
 
@@ -111,6 +106,7 @@ export class EventStore implements IEventPublisher, IMessageSource {
         res.on('end', () => {
           xml2js.parseString(rawData, (err, result) => {
             if (err) {
+              // tslint:disable-next-line:no-console
               console.trace(err);
               return;
             }
@@ -125,6 +121,7 @@ export class EventStore implements IEventPublisher, IMessageSource {
     };
 
     const onDropped = (subscription, reason, error) => {
+      // tslint:disable-next-line:no-console
       console.trace(subscription, reason, error);
     };
 
@@ -136,6 +133,7 @@ export class EventStore implements IEventPublisher, IMessageSource {
         false,
       );
     } catch (err) {
+      // tslint:disable-next-line:no-console
       console.trace(err);
     }
   }

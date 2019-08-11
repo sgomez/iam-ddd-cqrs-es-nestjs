@@ -13,7 +13,7 @@ export class ScopeService {
   constructor(private readonly commandBus: CommandBus) {}
 
   async createScope(id: string, name: string, alias: string) {
-    return await this.commandBus.execute(
+    return this.commandBus.execute(
       new CreateScopeCommand(
         ScopeId.fromString(id),
         ScopeName.fromString(name),
@@ -23,7 +23,7 @@ export class ScopeService {
   }
 
   async renameScope(id: string, name: string) {
-    return await this.commandBus.execute(
+    return this.commandBus.execute(
       new RenameScopeCommand(
         ScopeId.fromString(id),
         ScopeName.fromString(name),
@@ -32,7 +32,7 @@ export class ScopeService {
   }
 
   async removeScope(id: string) {
-    return await this.commandBus.execute(
+    return this.commandBus.execute(
       new RemoveScopeCommand(ScopeId.fromString(id)),
     );
   }
