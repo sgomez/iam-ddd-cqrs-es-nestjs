@@ -1,11 +1,17 @@
-import { ValueObject } from '../../../core/ddd';
+import { v4 as uuid } from 'uuid';
 import { version } from 'uuid-validate';
+
+import { ValueObject } from '../../../core/ddd';
 
 interface Props {
   value: string;
 }
 
 export class ScopeId extends ValueObject<Props> {
+  static generate(): ScopeId {
+    return new ScopeId({ value: uuid() });
+  }
+
   public static fromString(id: string): ScopeId {
     if (version(id) !== 4) {
       throw new Error('Invalid Id');
@@ -14,7 +20,7 @@ export class ScopeId extends ValueObject<Props> {
     return new ScopeId({ value: id });
   }
 
-  public value(): string {
+  get value(): string {
     return this.props.value;
   }
 }
