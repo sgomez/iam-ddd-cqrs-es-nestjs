@@ -1,12 +1,9 @@
-import { IEvent } from '@nestjs/cqrs';
-import { ScopeId } from '../model/ScopeId';
-import { ScopeName } from '../model/ScopeName';
-import { ScopeAlias } from '../model/ScopeAlias';
+import { DomainEvent } from '../../../core/ddd/DomainEvent';
 
-export class ScopeWasCreated implements IEvent {
+export class ScopeWasCreated implements DomainEvent {
   constructor(
-    public readonly id: ScopeId,
-    public readonly name: ScopeName,
-    public readonly alias: ScopeAlias,
+    public readonly id: string,
+    public readonly name: string,
+    public readonly alias: string,
   ) {}
 }

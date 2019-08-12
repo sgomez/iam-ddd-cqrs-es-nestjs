@@ -9,7 +9,7 @@ import { ScopeAlias } from '../../domain/model/ScopeAlias';
 import { ScopeId } from '../../domain/model/ScopeId';
 import { ScopeName } from '../../domain/model/ScopeName';
 import { ScopeEventStore } from '../../infrastructure/eventstore/ScopesEventStore';
-import { CreateScopeCommand } from './CreateScopeCommand';
+import { CreateScopeCommand } from '../command/CreateScopeCommand';
 import { CreateScopeHandler } from './CreateScopeHandler';
 
 describe('CreateScopeHandler', () => {
@@ -38,7 +38,9 @@ describe('CreateScopeHandler', () => {
   it('should creates a new scope', async () => {
     eventStore$.find = jest.fn(x => null);
 
-    await command.execute(new CreateScopeCommand(scopeId, name, alias));
+    await command.execute(
+      new CreateScopeCommand(scopeId.value, name.value, alias.value),
+    );
 
     expect(eventStore$.save).toHaveBeenCalledTimes(1);
     expect(eventStore$.save).toHaveBeenCalledWith(
@@ -52,7 +54,9 @@ describe('CreateScopeHandler', () => {
     );
 
     expect(
-      command.execute(new CreateScopeCommand(scopeId, name, alias)),
+      command.execute(
+        new CreateScopeCommand(scopeId.value, name.value, alias.value),
+      ),
     ).rejects.toThrow(ScopeIdAlreadyRegisteredException);
 
     expect(eventStore$.save).toHaveBeenCalledTimes(0);

@@ -22,7 +22,7 @@ export class Scope extends AggregateRoot {
   ): Scope {
     const scope = new Scope();
 
-    scope.apply(new ScopeWasCreated(scopeId, name, alias));
+    scope.apply(new ScopeWasCreated(scopeId.value, name.value, alias.value));
 
     return scope;
   }
@@ -48,7 +48,7 @@ export class Scope extends AggregateRoot {
       return;
     }
 
-    this.apply(new ScopeWasRenamed(this._scopeId, name));
+    this.apply(new ScopeWasRenamed(this._scopeId.value, name.value));
   }
 
   remove() {
@@ -56,18 +56,18 @@ export class Scope extends AggregateRoot {
       return;
     }
 
-    this.apply(new ScopeWasRemoved(this._scopeId));
+    this.apply(new ScopeWasRemoved(this._scopeId.value));
   }
 
   private onScopeWasCreated(event: ScopeWasCreated) {
-    this._scopeId = event.id;
-    this._name = event.name;
-    this._alias = event.alias;
+    this._scopeId = ScopeId.fromString(event.id);
+    this._name = ScopeName.fromString(event.name);
+    this._alias = ScopeAlias.fromString(event.alias);
     this._isRemoved = false;
   }
 
   private onScopeWasRenamed(event: ScopeWasRenamed) {
-    this._name = event.name;
+    this._name = ScopeName.fromString(event.name);
   }
 
   private onScopeWasRemoved(event: ScopeWasRemoved) {

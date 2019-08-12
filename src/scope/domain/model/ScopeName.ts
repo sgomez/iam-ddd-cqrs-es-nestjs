@@ -1,4 +1,4 @@
-import { ValueObject } from '../../../core/ddd';
+import { ValueObject } from '../../../core/ddd/ValueObject';
 
 interface Props {
   value: string;

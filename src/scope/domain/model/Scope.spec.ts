@@ -1,11 +1,12 @@
-import { TestingModule, Test } from '@nestjs/testing';
-import { Scope } from './Scope';
-import { ScopeId } from './ScopeId';
-import { v4 } from 'uuid';
-import { ScopeName } from './ScopeName';
-import { ScopeAlias } from './ScopeAlias';
 import { CqrsModule, EventBus, EventPublisher } from '@nestjs/cqrs';
-import { ScopeWasCreated, ScopeWasRenamed, ScopeWasRemoved } from '../event';
+import { Test, TestingModule } from '@nestjs/testing';
+import { v4 } from 'uuid';
+
+import { ScopeWasCreated, ScopeWasRemoved, ScopeWasRenamed } from '../event';
+import { Scope } from './Scope';
+import { ScopeAlias } from './ScopeAlias';
+import { ScopeId } from './ScopeId';
+import { ScopeName } from './ScopeName';
 
 describe('Scope', () => {
   let scope: Scope;
@@ -32,7 +33,7 @@ describe('Scope', () => {
 
     expect(eventBus$.publish).toHaveBeenCalledTimes(1);
     expect(eventBus$.publish).toHaveBeenCalledWith(
-      new ScopeWasCreated(scopeId, name, alias),
+      new ScopeWasCreated(scopeId.value, name.value, alias.value),
     );
   });
 
@@ -60,7 +61,7 @@ describe('Scope', () => {
 
     expect(eventBus$.publish).toHaveBeenCalledTimes(1);
     expect(eventBus$.publish).toHaveBeenCalledWith(
-      new ScopeWasRenamed(scopeId, newName),
+      new ScopeWasRenamed(scopeId.value, newName.value),
     );
 
     expect(scope.name.equals(newName)).toBeTruthy();
@@ -73,7 +74,7 @@ describe('Scope', () => {
 
     expect(eventBus$.publish).toHaveBeenCalledTimes(1);
     expect(eventBus$.publish).toHaveBeenCalledWith(
-      new ScopeWasRemoved(scopeId),
+      new ScopeWasRemoved(scopeId.value),
     );
 
     expect(scope.isRemoved).toBeTruthy();

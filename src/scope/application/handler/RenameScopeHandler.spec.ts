@@ -9,13 +9,13 @@ import { ScopeAlias } from '../../domain/model/ScopeAlias';
 import { ScopeId } from '../../domain/model/ScopeId';
 import { ScopeName } from '../../domain/model/ScopeName';
 import { ScopeEventStore } from '../../infrastructure/eventstore/ScopesEventStore';
-import { RemoveScopeCommand } from './RemoveScopeCommand';
-import { RemoveScopeHandler } from './RemoveScopeHandler';
+import { RenameScopeCommand } from '../command/RenameScopeCommand';
+import { RenameScopeHandler } from './RenameScopeHandler';
 
-describe('RemoveScopeHandler', () => {
+describe('RenameScopeHandler', () => {
   let eventPublisher$: EventPublisher;
   let eventStore$: ScopeEventStore;
-  let command: RemoveScopeHandler;
+  let command: RenameScopeHandler;
 
   const scopeId = ScopeId.fromString(uuid());
   const name = ScopeName.fromString('Scope Name');
@@ -32,29 +32,31 @@ describe('RemoveScopeHandler', () => {
     eventPublisher$ = module.get<EventPublisher>(EventPublisher);
     eventPublisher$.mergeObjectContext = jest.fn(x => x);
 
-    command = new RemoveScopeHandler(eventStore$, eventPublisher$);
+    command = new RenameScopeHandler(eventStore$, eventPublisher$);
   });
 
-  it('should remove a scope', async () => {
+  it('should rename a scope', async () => {
+    const newName = ScopeName.fromString('New name');
     eventStore$.find = jest.fn(id =>
       Promise.resolve(Scope.add(scopeId, name, alias)),
     );
 
-    await command.execute(new RemoveScopeCommand(scopeId));
+    await command.execute(new RenameScopeCommand(scopeId.value, newName.value));
 
     const scope = Scope.add(scopeId, name, alias);
-    scope.remove();
+    scope.rename(newName);
 
     expect(eventStore$.save).toHaveBeenCalledTimes(1);
     expect(eventStore$.save).toHaveBeenCalledWith(scope);
   });
 
   it('should throw an error if scope does not exists', async () => {
+    const newName = ScopeName.fromString('New name');
     eventStore$.find = jest.fn(x => null);
 
-    expect(command.execute(new RemoveScopeCommand(scopeId))).rejects.toThrow(
-      ScopeIdNotFoundException,
-    );
+    expect(
+      command.execute(new RenameScopeCommand(scopeId.value, newName.value)),
+    ).rejects.toThrow(ScopeIdNotFoundException);
 
     expect(eventStore$.save).toHaveBeenCalledTimes(0);
   });
