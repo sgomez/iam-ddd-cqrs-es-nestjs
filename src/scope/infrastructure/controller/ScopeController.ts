@@ -13,7 +13,10 @@ import {
 } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiUseTags } from '@nestjs/swagger';
 
-import { ScopeIdAlreadyRegisteredException, ScopeIdNotFoundException } from '../../domain/exception';
+import {
+  ScopeIdAlreadyRegisteredException,
+  ScopeIdNotFoundException,
+} from '../../domain/exception';
 import { ScopeAliasAlreadyRegisteredException } from '../../domain/exception/ScopeAliasAlreadyRegisteredException';
 import { RenameScopeDto, ScopeDto } from '../dto';
 import { ScopeView } from '../read-model/schema/ScopeSchema';
