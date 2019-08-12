@@ -6,7 +6,11 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { EventStore } from '../core/eventstore/eventstore';
 import { EventStoreModule } from '../core/eventstore/eventstore.module';
 import { CommandHandlers } from './application/handler';
-import { ScopeWasCreated, ScopeWasRemoved, ScopeWasRenamed } from './domain/event';
+import {
+  ScopeWasCreated,
+  ScopeWasRemoved,
+  ScopeWasRenamed,
+} from './domain/event';
 import { ScopeController } from './infrastructure/controller/ScopeController';
 import { ScopeEventStore } from './infrastructure/eventstore/ScopesEventStore';
 import { ProjectionHandlers } from './infrastructure/read-model/projection';

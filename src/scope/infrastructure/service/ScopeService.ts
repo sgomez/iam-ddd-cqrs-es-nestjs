@@ -3,7 +3,11 @@ import { CommandBus } from '@nestjs/cqrs';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 
-import { CreateScopeCommand, RemoveScopeCommand, RenameScopeCommand } from '../../application/command';
+import {
+  CreateScopeCommand,
+  RemoveScopeCommand,
+  RenameScopeCommand,
+} from '../../application/command';
 import { ScopeView } from '../read-model/schema/ScopeSchema';
 
 @Injectable()
