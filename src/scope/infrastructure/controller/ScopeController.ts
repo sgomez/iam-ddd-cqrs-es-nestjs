@@ -1,6 +1,7 @@
 import {
   BadRequestException,
   Body,
+  ConflictException,
   Controller,
   Delete,
   Get,
@@ -12,7 +13,8 @@ import {
 } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiUseTags } from '@nestjs/swagger';
 
-import { ScopeIdNotFoundException } from '../../domain/exception';
+import { ScopeIdAlreadyRegisteredException, ScopeIdNotFoundException } from '../../domain/exception';
+import { ScopeAliasAlreadyRegisteredException } from '../../domain/exception/ScopeAliasAlreadyRegisteredException';
 import { RenameScopeDto, ScopeDto } from '../dto';
 import { ScopeView } from '../read-model/schema/ScopeSchema';
 import { ScopeService } from '../service/ScopeService';
@@ -34,15 +36,27 @@ export class ScopeController {
   @HttpCode(204)
   @Post()
   async createScope(@Body() scopeDto: ScopeDto): Promise<ScopeDto> {
-    return this.scopeService.createScope(
-      scopeDto.id,
-      scopeDto.name,
-      scopeDto.alias,
-    );
+    try {
+      return await this.scopeService.createScope(
+        scopeDto.id,
+        scopeDto.name,
+        scopeDto.alias,
+      );
+    } catch (e) {
+      if (e instanceof ScopeIdAlreadyRegisteredException) {
+        throw new ConflictException(e.message);
+      } else if (e instanceof ScopeAliasAlreadyRegisteredException) {
+        throw new ConflictException(e.message);
+      } else if (e instanceof Error) {
+        throw new BadRequestException(`Unexpected error: ${e.message}`);
+      } else {
+        throw new BadRequestException('Server error');
+      }
+    }
   }
 
   @ApiOperation({ title: 'Get Scope' })
-  @ApiResponse({ status: 200, description: 'Get Scope.' })
+  @ApiResponse({ status: 204, description: 'Get Scope.' })
   @ApiResponse({ status: 404, description: 'Not found' })
   @Get(':id')
   async getScope(@Query('id') id: string): Promise<ScopeView> {
