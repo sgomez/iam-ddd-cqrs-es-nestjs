@@ -1,26 +1,31 @@
 import { Module, OnModuleInit } from '@nestjs/common';
 import { ModuleRef } from '@nestjs/core';
 import { CommandBus, CqrsModule, EventBus } from '@nestjs/cqrs';
+import { MongooseModule } from '@nestjs/mongoose';
 
 import { EventStore } from '../core/eventstore/eventstore';
 import { EventStoreModule } from '../core/eventstore/eventstore.module';
-import { CommandHandlers } from './application/command';
-import {
-  ScopeWasCreated,
-  ScopeWasRemoved,
-  ScopeWasRenamed,
-} from './domain/event';
-import { ScopeAlias } from './domain/model/ScopeAlias';
-import { ScopeId } from './domain/model/ScopeId';
-import { ScopeName } from './domain/model/ScopeName';
-import { ScopeController } from './infrastructure/controller/scope.controller';
+import { CommandHandlers } from './application/handler';
+import { ScopeWasCreated, ScopeWasRemoved, ScopeWasRenamed } from './domain/event';
+import { ScopeController } from './infrastructure/controller/ScopeController';
 import { ScopeEventStore } from './infrastructure/eventstore/ScopesEventStore';
-import { ScopeService } from './infrastructure/services/scope.service';
+import { ProjectionHandlers } from './infrastructure/read-model/projection';
+import { ScopeSchema } from './infrastructure/read-model/schema/ScopeSchema';
+import { ScopeService } from './infrastructure/service/ScopeService';
 
 @Module({
   controllers: [ScopeController],
-  imports: [CqrsModule, EventStoreModule.forFeature()],
-  providers: [ScopeService, ...CommandHandlers, ScopeEventStore],
+  imports: [
+    CqrsModule,
+    EventStoreModule.forFeature(),
+    MongooseModule.forFeature([{ name: 'Scope', schema: ScopeSchema }]),
+  ],
+  providers: [
+    ScopeService,
+    ...CommandHandlers,
+    ...ProjectionHandlers,
+    ScopeEventStore,
+  ],
 })
 export class ScopeModule implements OnModuleInit {
   constructor(
@@ -40,10 +45,10 @@ export class ScopeModule implements OnModuleInit {
   }
 
   eventHandlers = {
-    ScopeWasCreated: (id: ScopeId, name: ScopeName, alias: ScopeAlias) =>
+    ScopeWasCreated: (id: string, name: string, alias: string) =>
       new ScopeWasCreated(id, name, alias),
-    ScopeWasRenamed: (id: ScopeId, name: ScopeName) =>
+    ScopeWasRenamed: (id: string, name: string) =>
       new ScopeWasRenamed(id, name),
-    ScopeWasRemoved: (id: ScopeId) => new ScopeWasRemoved(id),
+    ScopeWasRemoved: (id: string) => new ScopeWasRemoved(id),
   };
 }

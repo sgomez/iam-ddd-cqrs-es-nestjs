@@ -2,8 +2,11 @@ import { CommandHandler, EventPublisher, ICommandHandler } from '@nestjs/cqrs';
 
 import { ScopeIdAlreadyRegisteredException } from '../../domain/exception/ScopeIdAlreadyRegisteredException';
 import { Scope } from '../../domain/model/Scope';
+import { ScopeAlias } from '../../domain/model/ScopeAlias';
+import { ScopeId } from '../../domain/model/ScopeId';
+import { ScopeName } from '../../domain/model/ScopeName';
 import { ScopeEventStore } from '../../infrastructure/eventstore/ScopesEventStore';
-import { CreateScopeCommand } from './CreateScopeCommand';
+import { CreateScopeCommand } from '../command';
 
 @CommandHandler(CreateScopeCommand)
 export class CreateScopeHandler implements ICommandHandler<CreateScopeCommand> {
@@ -13,7 +16,9 @@ export class CreateScopeHandler implements ICommandHandler<CreateScopeCommand> {
   ) {}
 
   async execute(command: CreateScopeCommand) {
-    const { scopeId, name, alias } = command;
+    const scopeId = ScopeId.fromString(command.scopeId);
+    const name = ScopeName.fromString(command.name);
+    const alias = ScopeAlias.fromString(command.alias);
 
     const instance = await this.eventStore.find(scopeId);
 
