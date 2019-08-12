@@ -1,4 +1,5 @@
 import { CqrsModule, EventPublisher } from '@nestjs/cqrs';
+import { getModelToken } from '@nestjs/mongoose';
 import { Test, TestingModule } from '@nestjs/testing';
 import { v4 as uuid } from 'uuid';
 
@@ -15,47 +16,63 @@ import { RenameScopeHandler } from './RenameScopeHandler';
 describe('RenameScopeHandler', () => {
   let eventPublisher$: EventPublisher;
   let eventStore$: ScopeEventStore;
-  let command: RenameScopeHandler;
+  let command$: RenameScopeHandler;
 
   const scopeId = ScopeId.fromString(uuid());
   const name = ScopeName.fromString('Scope Name');
   const alias = ScopeAlias.fromString('scope-alias');
 
+  const scopeView = {
+    _id: scopeId.value,
+    name: name.value,
+    alias: alias.value,
+  };
+
+  const eventModel = {
+    findById: jest.fn().mockResolvedValue(scopeView),
+  };
+
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       imports: [CqrsModule, EventStoreModule.forFeature()],
-      providers: [ScopeEventStore],
+      providers: [
+        RenameScopeHandler,
+        ScopeEventStore,
+        {
+          provide: getModelToken('Scope'),
+          useValue: eventModel,
+        },
+      ],
     }).compile();
 
     eventStore$ = module.get<ScopeEventStore>(ScopeEventStore);
-    eventStore$.save = jest.fn(x => null);
+    eventStore$.save = jest.fn();
+    eventStore$.find = jest
+      .fn()
+      .mockResolvedValue(Scope.add(scopeId, name, alias));
     eventPublisher$ = module.get<EventPublisher>(EventPublisher);
     eventPublisher$.mergeObjectContext = jest.fn(x => x);
-
-    command = new RenameScopeHandler(eventStore$, eventPublisher$);
+    command$ = module.get<RenameScopeHandler>(RenameScopeHandler);
   });
 
   it('should rename a scope', async () => {
-    const newName = ScopeName.fromString('New name');
-    eventStore$.find = jest.fn(id =>
-      Promise.resolve(Scope.add(scopeId, name, alias)),
-    );
-
-    await command.execute(new RenameScopeCommand(scopeId.value, newName.value));
-
     const scope = Scope.add(scopeId, name, alias);
+    const newName = ScopeName.fromString('New name');
     scope.rename(newName);
+
+    await command$.execute(
+      new RenameScopeCommand(scopeId.value, newName.value),
+    );
 
     expect(eventStore$.save).toHaveBeenCalledTimes(1);
     expect(eventStore$.save).toHaveBeenCalledWith(scope);
   });
 
   it('should throw an error if scope does not exists', async () => {
-    const newName = ScopeName.fromString('New name');
-    eventStore$.find = jest.fn(x => null);
+    eventModel.findById = jest.fn().mockResolvedValue(null);
 
     expect(
-      command.execute(new RenameScopeCommand(scopeId.value, newName.value)),
+      command$.execute(new RenameScopeCommand(scopeId.value, 'New name')),
     ).rejects.toThrow(ScopeIdNotFoundException);
 
     expect(eventStore$.save).toHaveBeenCalledTimes(0);

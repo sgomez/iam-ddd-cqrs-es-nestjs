@@ -3,7 +3,6 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 
 import { ScopeIdNotFoundException } from '../../domain/exception/ScopeIdNotFoundException';
-import { Scope } from '../../domain/model/Scope';
 import { ScopeId } from '../../domain/model/ScopeId';
 import { ScopeEventStore } from '../../infrastructure/eventstore/ScopesEventStore';
 import { ScopeView } from '../../infrastructure/read-model/schema/ScopeSchema';
@@ -18,7 +17,7 @@ export class RemoveScopeHandler implements ICommandHandler<RemoveScopeCommand> {
   ) {}
 
   async execute(command: RemoveScopeCommand) {
-    const scopeView = await this.scopeModel.findById(command.scopeId).exec();
+    const scopeView = await this.scopeModel.findById(command.scopeId);
 
     if (scopeView === null) {
       throw ScopeIdNotFoundException.withString(command.scopeId);
@@ -29,10 +28,6 @@ export class RemoveScopeHandler implements ICommandHandler<RemoveScopeCommand> {
     const scope = this.publisher.mergeObjectContext(
       await this.eventStore.find(scopeId),
     );
-
-    if (scope instanceof Scope === false) {
-      throw ScopeIdNotFoundException.withScopeId(scopeId);
-    }
 
     scope.remove();
 
