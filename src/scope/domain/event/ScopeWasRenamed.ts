@@ -1,8 +1,5 @@
-import { IEvent } from '@nestjs/cqrs';
+import { DomainEvent } from '../../../core/ddd/DomainEvent';
 
-import { ScopeId } from '../model/ScopeId';
-import { ScopeName } from '../model/ScopeName';
-
-export class ScopeWasRenamed implements IEvent {
-  constructor(public readonly id: ScopeId, public readonly name: ScopeName) {}
+export class ScopeWasRenamed implements DomainEvent {
+  constructor(public readonly id: string, public readonly name: string) {}
 }

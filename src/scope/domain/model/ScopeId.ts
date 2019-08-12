@@ -1,7 +1,7 @@
 import { v4 as uuid } from 'uuid';
 import { version } from 'uuid-validate';
 
-import { ValueObject } from '../../../core/ddd';
+import { ValueObject } from '../../../core/ddd/ValueObject';
 
 interface Props {
   value: string;

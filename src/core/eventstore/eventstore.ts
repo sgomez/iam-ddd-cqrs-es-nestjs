@@ -4,8 +4,8 @@ import { IEvent } from '@nestjs/cqrs/dist/interfaces/events/event.interface';
 import { IMessageSource } from '@nestjs/cqrs/dist/interfaces/events/message-source.interface';
 import { TCPClient } from 'geteventstore-promise';
 import * as http from 'http';
+import { RequestOptions } from 'https';
 import { Subject } from 'rxjs';
-import * as xml2js from 'xml2js';
 
 import { config } from '../../../config';
 import { Scope } from '../../scope/domain/model/Scope';
@@ -24,7 +24,6 @@ const eventStoreHostUrl =
  */
 @Injectable()
 export class EventStore implements IEventPublisher, IMessageSource {
-  private eventStore: any;
   private eventHandlers: object;
   private category: string;
   private client: TCPClient;
@@ -40,8 +39,12 @@ export class EventStore implements IEventPublisher, IMessageSource {
   }
 
   async publish<T extends IEvent>(event: T) {
+    if ('id' in event === false) {
+      throw new Error('Not a DomainEvent');
+    }
+
     const message = JSON.parse(JSON.stringify(event));
-    const id = message.id.props.value;
+    const id = message.id;
     const streamName = `${this.category}-${id}`;
     const type = event.constructor.name;
     const metadata = {
@@ -97,25 +100,27 @@ export class EventStore implements IEventPublisher, IMessageSource {
     const onEvent = async event => {
       const eventUrl =
         eventStoreHostUrl + `${event.metadata.$o}/${event.data.split('@')[0]}`;
-      http.get(eventUrl, res => {
+
+      const requestOptions: http.RequestOptions = {
+        headers: {
+          Accept: 'application/vnd.eventstore.atom+json',
+        },
+      };
+
+      http.get(eventUrl, requestOptions, res => {
         res.setEncoding('utf8');
         let rawData = '';
         res.on('data', chunk => {
           rawData += chunk;
         });
         res.on('end', () => {
-          xml2js.parseString(rawData, (err, result) => {
-            if (err) {
-              // tslint:disable-next-line:no-console
-              console.trace(err);
-              return;
-            }
-            const content = result['atom:entry']['atom:content'][0];
-            const eventType = content.eventType[0];
-            const data = content.data[0];
-            event = this.eventHandlers[eventType](...Object.values(data));
-            subject.next(event);
-          });
+          const message = JSON.parse(rawData);
+
+          const eventType = message.content.eventType;
+          const data = message.content.data;
+          event = this.eventHandlers[eventType](...Object.values(data));
+
+          subject.next(event);
         });
       });
     };

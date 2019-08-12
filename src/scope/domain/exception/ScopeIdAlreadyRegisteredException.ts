@@ -1,11 +1,7 @@
-import { ScopeId } from '../model/ScopeId';
-
 export class ScopeIdAlreadyRegisteredException extends Error {
-  public static withScopeId(
-    scopeId: ScopeId,
-  ): ScopeIdAlreadyRegisteredException {
+  public static withString(scopeId: string): ScopeIdAlreadyRegisteredException {
     return new ScopeIdAlreadyRegisteredException(
-      `ScopeId ${scopeId.value} already taken.`,
+      `ScopeId ${scopeId} already taken.`,
     );
   }
 }
