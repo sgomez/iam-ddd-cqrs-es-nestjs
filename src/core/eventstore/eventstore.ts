@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { AggregateRoot } from '@nestjs/cqrs';
 import { IEventPublisher } from '@nestjs/cqrs/dist/interfaces/events/event-publisher.interface';
 import { IEvent } from '@nestjs/cqrs/dist/interfaces/events/event.interface';
 import { IMessageSource } from '@nestjs/cqrs/dist/interfaces/events/message-source.interface';
@@ -8,7 +9,6 @@ import { RequestOptions } from 'https';
 import { Subject } from 'rxjs';
 
 import { config } from '../../../config';
-import { Scope } from '../../scope/domain/model/Scope';
 
 const eventStoreHostUrl =
   config.EVENT_STORE_SETTINGS.protocol +
@@ -60,11 +60,11 @@ export class EventStore implements IEventPublisher, IMessageSource {
     }
   }
 
-  async read(object: any, id: string): Promise<Scope> | null {
+  async read<T extends AggregateRoot>(T: any, id: string): Promise<T> | null {
     const streamName = `${this.category}-${id}`;
 
     try {
-      const scope = new Scope();
+      const entity = new T();
 
       const response = await this.client.getEvents(streamName);
 
@@ -79,9 +79,9 @@ export class EventStore implements IEventPublisher, IMessageSource {
         return null;
       }
 
-      scope.loadFromHistory(events);
+      entity.loadFromHistory(events);
 
-      return scope;
+      return entity;
     } catch (err) {
       // tslint:disable-next-line:no-console
       console.trace(err);
