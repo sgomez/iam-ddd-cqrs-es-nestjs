@@ -13,8 +13,6 @@ export class ScopeWasRenamedProjection
   ) {}
 
   async handle(event: ScopeWasRenamed) {
-    const scopeView = await this.scopeModel.findById(event.id).exec();
-
-    scopeView.update({ name: event.name });
+    this.scopeModel.updateOne({ _id: event.id }, { name: event.name }).exec();
   }
 }
