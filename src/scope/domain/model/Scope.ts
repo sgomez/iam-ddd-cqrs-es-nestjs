@@ -1,9 +1,9 @@
-import { AggregateRoot } from '@nestjs/cqrs';
+import { AggregateRoot } from "@nestjs/cqrs";
 
-import { ScopeWasCreated, ScopeWasRemoved, ScopeWasRenamed } from '../event';
-import { ScopeAlias } from './ScopeAlias';
-import { ScopeId } from './ScopeId';
-import { ScopeName } from './ScopeName';
+import { ScopeWasCreated, ScopeWasRemoved, ScopeWasRenamed } from "../event";
+import { ScopeAlias } from "./ScopeAlias";
+import { ScopeId } from "./ScopeId";
+import { ScopeName } from "./ScopeName";
 
 export class Scope extends AggregateRoot {
   private _scopeId: ScopeId;
@@ -11,7 +11,7 @@ export class Scope extends AggregateRoot {
   private _alias: ScopeAlias;
   private _isRemoved: boolean;
 
-  constructor() {
+  private constructor() {
     super();
   }
 

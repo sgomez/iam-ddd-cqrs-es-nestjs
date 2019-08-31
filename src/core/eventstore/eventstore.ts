@@ -1,14 +1,18 @@
-import { Injectable } from '@nestjs/common';
-import { AggregateRoot } from '@nestjs/cqrs';
-import { IEventPublisher } from '@nestjs/cqrs/dist/interfaces/events/event-publisher.interface';
-import { IEvent } from '@nestjs/cqrs/dist/interfaces/events/event.interface';
-import { IMessageSource } from '@nestjs/cqrs/dist/interfaces/events/message-source.interface';
-import { TCPClient } from 'geteventstore-promise';
-import * as http from 'http';
-import { RequestOptions } from 'https';
-import { Subject } from 'rxjs';
+import { Injectable } from "@nestjs/common";
+import { AggregateRoot } from "@nestjs/cqrs";
+import {
+  IEventPublisher,
+} from "@nestjs/cqrs/dist/interfaces/events/event-publisher.interface";
+import { IEvent } from "@nestjs/cqrs/dist/interfaces/events/event.interface";
+import {
+  IMessageSource,
+} from "@nestjs/cqrs/dist/interfaces/events/message-source.interface";
+import { TCPClient } from "geteventstore-promise";
+import * as http from "http";
+import { RequestOptions } from "https";
+import { Subject } from "rxjs";
 
-import { config } from '../../../config';
+import { config } from "../../../config";
 
 const eventStoreHostUrl =
   config.EVENT_STORE_SETTINGS.protocol +
@@ -64,7 +68,7 @@ export class EventStore implements IEventPublisher, IMessageSource {
     const streamName = `${this.category}-${id}`;
 
     try {
-      const entity = new T();
+      const entity = new (Object.create(T.prototype)).constructor();
 
       const response = await this.client.getEvents(streamName);
 
@@ -80,6 +84,8 @@ export class EventStore implements IEventPublisher, IMessageSource {
       }
 
       entity.loadFromHistory(events);
+
+      console.debug(entity);
 
       return entity;
     } catch (err) {
