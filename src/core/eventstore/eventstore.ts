@@ -85,8 +85,6 @@ export class EventStore implements IEventPublisher, IMessageSource {
 
       entity.loadFromHistory(events);
 
-      console.debug(entity);
-
       return entity;
     } catch (err) {
       // tslint:disable-next-line:no-console
@@ -149,7 +147,10 @@ export class EventStore implements IEventPublisher, IMessageSource {
     }
   }
 
-  setEventHandlers(eventHandlers) {
-    this.eventHandlers = eventHandlers;
+  addEventHandlers(eventHandlers) {
+    this.eventHandlers = {
+      ...this.eventHandlers,
+      ...eventHandlers,
+    };
   }
 }

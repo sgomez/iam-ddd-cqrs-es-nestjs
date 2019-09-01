@@ -1,9 +1,10 @@
-import { Module } from '@nestjs/common';
-import { CqrsModule } from '@nestjs/cqrs';
-import { MongooseModule } from '@nestjs/mongoose';
+import { Module, OnModuleInit } from "@nestjs/common";
+import { CqrsModule, EventBus } from "@nestjs/cqrs";
+import { MongooseModule } from "@nestjs/mongoose";
 
-import { EventStoreModule } from './core/eventstore/eventstore.module';
-import { ScopeModule } from './scope/scope.module';
+import { EventStore } from "./core/eventstore/eventstore";
+import { EventStoreModule } from "./core/eventstore/eventstore.module";
+import { ScopeModule } from "./scope/scope.module";
 
 @Module({
   imports: [
@@ -13,4 +14,15 @@ import { ScopeModule } from './scope/scope.module';
     CqrsModule,
   ],
 })
-export class AppModule {}
+export class AppModule implements OnModuleInit {
+  constructor(
+    private readonly event$: EventBus,
+    private readonly eventStore: EventStore,
+  ) {}
+
+  onModuleInit() {
+    /** ------------ */
+    this.eventStore.bridgeEventsTo((this.event$ as any).subject$);
+    this.event$.publisher = this.eventStore;
+  }
+}
