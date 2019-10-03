@@ -1,15 +1,18 @@
-import { Module, OnModuleInit } from "@nestjs/common";
-import { CqrsModule, EventBus } from "@nestjs/cqrs";
-import { MongooseModule } from "@nestjs/mongoose";
+import { Global, Module, OnModuleInit } from '@nestjs/common';
+import { CqrsModule, EventBus } from '@nestjs/cqrs';
 
-import { EventStore } from "./core/eventstore/eventstore";
-import { EventStoreModule } from "./core/eventstore/eventstore.module";
-import { ScopeModule } from "./scope/scope.module";
+import { BootstrapModule } from './bootstrap.module';
+import { DatabaseModule } from './core/database/database.module';
+import { EventStore } from './core/eventstore/eventstore';
+import { EventStoreModule } from './core/eventstore/eventstore.module';
+import { ScopeModule } from './scope/scope.module';
 
+@Global()
 @Module({
   imports: [
-    EventStoreModule.forRoot(),
-    MongooseModule.forRoot('mongodb://localhost/iam'),
+    BootstrapModule,
+    DatabaseModule,
+    EventStoreModule.forFeature(),
     ScopeModule,
     CqrsModule,
   ],
