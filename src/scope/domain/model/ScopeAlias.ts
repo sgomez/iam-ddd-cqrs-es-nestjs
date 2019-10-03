@@ -1,4 +1,4 @@
-import { ValueObject } from "../../../core/domain/models/value-object";
+import { ValueObject } from '../../../core/domain/models/value-object';
 
 interface Props {
   value: string;

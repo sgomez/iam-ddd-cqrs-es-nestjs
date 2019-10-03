@@ -1,9 +1,8 @@
-import { Scope } from '../model/Scope';
-import { ScopeId } from '../model/ScopeId';
+import { Scope, ScopeId } from '../model';
 
 export interface Scopes {
-  get(scopeId: ScopeId): Promise<Scope>;
   find(scopeId: ScopeId): Promise<Scope> | null;
-  save(scope: Scope): void;
+  get(scopeId: ScopeId): Promise<Scope>;
   nextIdentity(): ScopeId;
+  save(scope: Scope): void;
 }

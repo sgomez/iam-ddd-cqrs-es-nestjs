@@ -1,5 +1,5 @@
+import { Inject } from '@nestjs/common';
 import { EventsHandler, IEventHandler } from '@nestjs/cqrs';
-import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 
 import { ScopeWasRenamed } from '../../../domain/event';
@@ -9,7 +9,7 @@ import { ScopeView } from '../schema/ScopeSchema';
 export class ScopeWasRenamedProjection
   implements IEventHandler<ScopeWasRenamed> {
   constructor(
-    @InjectModel('Scope') private readonly scopeModel: Model<ScopeView>,
+    @Inject('SCOPE_MODEL') private readonly scopeModel: Model<ScopeView>,
   ) {}
 
   async handle(event: ScopeWasRenamed) {

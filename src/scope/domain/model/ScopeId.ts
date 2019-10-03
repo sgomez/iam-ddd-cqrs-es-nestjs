@@ -1,7 +1,7 @@
-import { v4 as uuid } from "uuid";
-import { version } from "uuid-validate";
+import { v4 as uuid } from 'uuid';
+import { version } from 'uuid-validate';
 
-import { Id } from "../../../core/domain/models/id";
+import { Id } from '../../../core/domain/models/id';
 
 interface Props {
   value: string;

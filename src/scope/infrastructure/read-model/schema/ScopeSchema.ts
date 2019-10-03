@@ -12,3 +12,5 @@ export interface ScopeView extends Document {
   readonly name: string;
   readonly alias: string;
 }
+
+export const SCOPE_MODEL = 'SCOPE_MODEL';

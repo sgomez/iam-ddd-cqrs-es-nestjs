@@ -1,23 +1,26 @@
+import { Inject } from '@nestjs/common';
 import { CommandHandler, EventPublisher, ICommandHandler } from '@nestjs/cqrs';
-import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 
-import { ScopeAliasAlreadyRegisteredException } from '../../domain/exception/ScopeAliasAlreadyRegisteredException';
-import { ScopeIdAlreadyRegisteredException } from '../../domain/exception/ScopeIdAlreadyRegisteredException';
-import { Scope } from '../../domain/model/Scope';
-import { ScopeAlias } from '../../domain/model/ScopeAlias';
-import { ScopeId } from '../../domain/model/ScopeId';
-import { ScopeName } from '../../domain/model/ScopeName';
+import {
+  ScopeAliasAlreadyRegisteredException,
+  ScopeIdAlreadyRegisteredException,
+} from '../../domain/exception';
+import { Scope, ScopeAlias, ScopeId, ScopeName } from '../../domain/model';
+import { SCOPES } from '../../domain/repository';
 import { ScopeEventStore } from '../../infrastructure/eventstore/ScopesEventStore';
-import { ScopeView } from '../../infrastructure/read-model/schema/ScopeSchema';
+import {
+  SCOPE_MODEL,
+  ScopeView,
+} from '../../infrastructure/read-model/schema/ScopeSchema';
 import { CreateScopeCommand } from '../command';
 
 @CommandHandler(CreateScopeCommand)
 export class CreateScopeHandler implements ICommandHandler<CreateScopeCommand> {
   constructor(
-    private readonly eventStore: ScopeEventStore,
+    @Inject(SCOPES) private readonly eventStore: ScopeEventStore,
+    @Inject(SCOPE_MODEL) private readonly scopeModel: Model<ScopeView>,
     private readonly publisher: EventPublisher,
-    @InjectModel('Scope') private readonly scopeModel: Model<ScopeView>,
   ) {}
 
   async execute(command: CreateScopeCommand) {

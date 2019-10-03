@@ -1,15 +1,17 @@
 import { CqrsModule, EventPublisher } from '@nestjs/cqrs';
-import { getModelToken } from '@nestjs/mongoose';
 import { Test, TestingModule } from '@nestjs/testing';
 import { v4 as uuid } from 'uuid';
 
+import { BootstrapModule } from '../../../bootstrap.module';
 import { EventStoreModule } from '../../../core/eventstore/eventstore.module';
 import { ScopeIdNotFoundException } from '../../domain/exception/ScopeIdNotFoundException';
 import { Scope } from '../../domain/model/Scope';
 import { ScopeAlias } from '../../domain/model/ScopeAlias';
 import { ScopeId } from '../../domain/model/ScopeId';
 import { ScopeName } from '../../domain/model/ScopeName';
+import { SCOPES } from '../../domain/repository';
 import { ScopeEventStore } from '../../infrastructure/eventstore/ScopesEventStore';
+import { SCOPE_MODEL } from '../../infrastructure/read-model/schema/ScopeSchema';
 import { RemoveScopeCommand } from '../command/RemoveScopeCommand';
 import { RemoveScopeHandler } from './RemoveScopeHandler';
 
@@ -28,24 +30,27 @@ describe('RemoveScopeHandler', () => {
     alias: alias.value,
   };
 
-  const eventModel = {
+  const scopeModel = {
     findById: jest.fn().mockResolvedValue(scopeView),
   };
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      imports: [CqrsModule, EventStoreModule.forFeature()],
+      imports: [CqrsModule, EventStoreModule.forFeature(), BootstrapModule],
       providers: [
         RemoveScopeHandler,
-        ScopeEventStore,
         {
-          provide: getModelToken('Scope'),
-          useValue: eventModel,
+          provide: SCOPE_MODEL,
+          useValue: scopeModel,
+        },
+        {
+          provide: SCOPES,
+          useClass: ScopeEventStore,
         },
       ],
     }).compile();
 
-    eventStore$ = module.get<ScopeEventStore>(ScopeEventStore);
+    eventStore$ = module.get<ScopeEventStore>(SCOPES);
     eventStore$.save = jest.fn();
     eventStore$.find = jest
       .fn()
@@ -66,7 +71,7 @@ describe('RemoveScopeHandler', () => {
   });
 
   it('should throw an error if scope does not exists', async () => {
-    eventModel.findById = jest.fn().mockResolvedValue(null);
+    scopeModel.findById = jest.fn().mockResolvedValue(null);
 
     expect(
       command$.execute(new RemoveScopeCommand(scopeId.value)),

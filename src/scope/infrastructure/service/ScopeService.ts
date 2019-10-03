@@ -1,6 +1,5 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { CommandBus } from '@nestjs/cqrs';
-import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 
 import {
@@ -8,13 +7,13 @@ import {
   RemoveScopeCommand,
   RenameScopeCommand,
 } from '../../application/command';
-import { ScopeView } from '../read-model/schema/ScopeSchema';
+import { SCOPE_MODEL, ScopeView } from '../read-model/schema/ScopeSchema';
 
 @Injectable()
 export class ScopeService {
   constructor(
     private readonly commandBus: CommandBus,
-    @InjectModel('Scope') private readonly scopeModel: Model<ScopeView>,
+    @Inject(SCOPE_MODEL) private readonly scopeModel: Model<ScopeView>,
   ) {}
 
   async createScope(id: string, name: string, alias: string) {
