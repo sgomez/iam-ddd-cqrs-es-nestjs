@@ -1,14 +1,14 @@
-import { config } from '../../../config';
-import { EventStore } from './eventstore.class';
+import { TCPClient } from "geteventstore-promise";
+import { ConfigService } from "nestjs-config";
 
-export const eventStoreProviders = [
-  {
-    provide: 'EVENT_STORE_PROVIDER',
-    useFactory: (eventStoreConfig?: any): any => {
-      if (eventStoreConfig === 'EVENT_STORE_CONFIG_USE_ENV') {
-        return new EventStore();
-      }
-    },
-    inject: ['EVENT_STORE_CONFIG'],
-  },
-];
+export const eventStoreProvider = {
+  provide: 'EVENT_STORE_TCP_CLIENT',
+  useFactory: (config: ConfigService): TCPClient =>
+    new TCPClient({
+      hostname: config.get('eventstore').hostname,
+      port: config.get('eventstore').tcpPort,
+      credentials: config.get('eventstore').credentials,
+      poolOptions: config.get('eventstore').poolOptions,
+    }),
+  inject: [ConfigService],
+};

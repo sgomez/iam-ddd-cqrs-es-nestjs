@@ -1,24 +1,11 @@
-import { Injectable } from "@nestjs/common";
-import { AggregateRoot } from "@nestjs/cqrs";
-import {
-  IEventPublisher,
-} from "@nestjs/cqrs/dist/interfaces/events/event-publisher.interface";
-import { IEvent } from "@nestjs/cqrs/dist/interfaces/events/event.interface";
-import {
-  IMessageSource,
-} from "@nestjs/cqrs/dist/interfaces/events/message-source.interface";
+import { Inject, Injectable } from "@nestjs/common";
+import { IEvent, IEventPublisher, IMessageSource } from "@nestjs/cqrs";
 import { TCPClient } from "geteventstore-promise";
 import * as http from "http";
-import { RequestOptions } from "https";
+import { ConfigService } from "nestjs-config";
 import { Subject } from "rxjs";
 
-import { config } from "../../../config";
-
-const eventStoreHostUrl =
-  config.EVENT_STORE_SETTINGS.protocol +
-  `://${config.EVENT_STORE_SETTINGS.hostname}:${
-    config.EVENT_STORE_SETTINGS.httpPort
-  }/streams/`;
+import { AggregateRoot } from "../domain/models/aggregate-root";
 
 /**
  * @class EventStore
@@ -28,18 +15,23 @@ const eventStoreHostUrl =
  */
 @Injectable()
 export class EventStore implements IEventPublisher, IMessageSource {
-  private eventHandlers: object;
-  private category: string;
-  private client: TCPClient;
+  private _category: string;
+  private _client: TCPClient;
+  private _eventHandlers: object;
+  private _eventStoreHostUrl: string;
 
-  constructor() {
-    this.category = 'iam';
-    this.client = new TCPClient({
-      hostname: config.EVENT_STORE_SETTINGS.hostname,
-      port: config.EVENT_STORE_SETTINGS.tcpPort,
-      credentials: config.EVENT_STORE_SETTINGS.credentials,
-      poolOptions: config.EVENT_STORE_SETTINGS.poolOptions,
-    });
+  constructor(
+    private readonly _config: ConfigService,
+    @Inject('EVENT_STORE_TCP_CLIENT') private readonly client: TCPClient,
+  ) {
+    this._category = 'iam';
+    this._client = client;
+
+    this._eventStoreHostUrl =
+      _config.get('eventstore').protocol +
+      `://${_config.get('eventstore').hostname}:${
+        _config.get('eventstore').httpPort
+      }/streams/`;
   }
 
   async publish<T extends IEvent>(event: T) {
@@ -49,7 +41,7 @@ export class EventStore implements IEventPublisher, IMessageSource {
 
     const message = JSON.parse(JSON.stringify(event));
     const id = message.id;
-    const streamName = `${this.category}-${id}`;
+    const streamName = `${this._category}-${id}`;
     const type = event.constructor.name;
     const metadata = {
       _aggregate_id: id,
@@ -57,26 +49,28 @@ export class EventStore implements IEventPublisher, IMessageSource {
     };
 
     try {
-      await this.client.writeEvent(streamName, type, event, metadata);
+      await this._client.writeEvent(streamName, type, event, metadata);
     } catch (err) {
       // tslint:disable-next-line:no-console
       console.trace(err);
     }
   }
 
-  async read<T extends AggregateRoot>(T: any, id: string): Promise<T> | null {
-    const streamName = `${this.category}-${id}`;
+  async read<T extends AggregateRoot>(
+    aggregate: Function,
+    id: string,
+  ): Promise<T> | null {
+    const streamName = `${this._category}-${id}`;
 
     try {
-      const entity = new (Object.create(T.prototype)).constructor();
-
-      const response = await this.client.getEvents(streamName);
+      const entity = Reflect.construct(aggregate, []);
+      const response = await this._client.getEvents(streamName);
 
       const events = response.map(event => {
         const eventType = event.eventType;
         const data = event.data;
 
-        return this.eventHandlers[eventType](...Object.values(data));
+        return this._eventHandlers[eventType](...Object.values(data));
       });
 
       if (events.length === 0) {
@@ -99,11 +93,12 @@ export class EventStore implements IEventPublisher, IMessageSource {
    * @param subject
    */
   async bridgeEventsTo<T extends IEvent>(subject: Subject<T>) {
-    const streamName = `$ce-${this.category}`;
+    const streamName = `$ce-${this._category}`;
 
     const onEvent = async event => {
       const eventUrl =
-        eventStoreHostUrl + `${event.metadata.$o}/${event.data.split('@')[0]}`;
+        this._eventStoreHostUrl +
+        `${event.metadata.$o}/${event.data.split('@')[0]}`;
 
       const requestOptions: http.RequestOptions = {
         headers: {
@@ -122,7 +117,7 @@ export class EventStore implements IEventPublisher, IMessageSource {
 
           const eventType = message.content.eventType;
           const data = message.content.data;
-          event = this.eventHandlers[eventType](...Object.values(data));
+          event = this._eventHandlers[eventType](...Object.values(data));
 
           subject.next(event);
         });
@@ -135,7 +130,7 @@ export class EventStore implements IEventPublisher, IMessageSource {
     };
 
     try {
-      await this.client.subscribeToStream(
+      await this._client.subscribeToStream(
         streamName,
         onEvent,
         onDropped,
@@ -148,8 +143,8 @@ export class EventStore implements IEventPublisher, IMessageSource {
   }
 
   addEventHandlers(eventHandlers) {
-    this.eventHandlers = {
-      ...this.eventHandlers,
+    this._eventHandlers = {
+      ...this._eventHandlers,
       ...eventHandlers,
     };
   }
