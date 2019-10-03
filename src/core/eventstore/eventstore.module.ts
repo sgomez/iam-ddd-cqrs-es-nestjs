@@ -1,7 +1,7 @@
-import { DynamicModule } from "@nestjs/common";
+import { DynamicModule } from '@nestjs/common';
 
-import { EventStore } from "./eventstore";
-import { eventStoreProvider } from "./eventstore.provider";
+import { EventStore } from './eventstore';
+import { eventStoreProviders } from './eventstore.provider';
 
 export class EventStoreModule {
   static forRoot(): DynamicModule {
@@ -13,8 +13,8 @@ export class EventStoreModule {
   static forFeature(): DynamicModule {
     return {
       module: EventStoreModule,
-      providers: [EventStore, eventStoreProvider],
-      exports: [EventStore, eventStoreProvider],
+      providers: [EventStore, ...eventStoreProviders],
+      exports: [EventStore, ...eventStoreProviders],
     };
   }
 }

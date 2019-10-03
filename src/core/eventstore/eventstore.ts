@@ -1,11 +1,11 @@
-import { Inject, Injectable } from "@nestjs/common";
-import { IEvent, IEventPublisher, IMessageSource } from "@nestjs/cqrs";
-import { TCPClient } from "geteventstore-promise";
-import * as http from "http";
-import { ConfigService } from "nestjs-config";
-import { Subject } from "rxjs";
+import { Injectable } from '@nestjs/common';
+import { IEvent, IEventPublisher, IMessageSource } from '@nestjs/cqrs';
+import { TCPClient } from 'geteventstore-promise';
+import * as http from 'http';
+import { ConfigService } from 'nestjs-config';
+import { Subject } from 'rxjs';
 
-import { AggregateRoot } from "../domain/models/aggregate-root";
+import { AggregateRoot } from '../domain/models/aggregate-root';
 
 /**
  * @class EventStore
@@ -16,21 +16,15 @@ import { AggregateRoot } from "../domain/models/aggregate-root";
 @Injectable()
 export class EventStore implements IEventPublisher, IMessageSource {
   private _category: string;
-  private _client: TCPClient;
   private _eventHandlers: object;
   private _eventStoreHostUrl: string;
 
-  constructor(
-    private readonly _config: ConfigService,
-    @Inject('EVENT_STORE_TCP_CLIENT') private readonly client: TCPClient,
-  ) {
+  constructor(config: ConfigService, private readonly client: TCPClient) {
     this._category = 'iam';
-    this._client = client;
-
     this._eventStoreHostUrl =
-      _config.get('eventstore').protocol +
-      `://${_config.get('eventstore').hostname}:${
-        _config.get('eventstore').httpPort
+      config.get('eventstore').protocol +
+      `://${config.get('eventstore').hostname}:${
+        config.get('eventstore').httpPort
       }/streams/`;
   }
 
@@ -49,7 +43,7 @@ export class EventStore implements IEventPublisher, IMessageSource {
     };
 
     try {
-      await this._client.writeEvent(streamName, type, event, metadata);
+      await this.client.writeEvent(streamName, type, event, metadata);
     } catch (err) {
       // tslint:disable-next-line:no-console
       console.trace(err);
@@ -64,7 +58,7 @@ export class EventStore implements IEventPublisher, IMessageSource {
 
     try {
       const entity = Reflect.construct(aggregate, []);
-      const response = await this._client.getEvents(streamName);
+      const response = await this.client.getEvents(streamName);
 
       const events = response.map(event => {
         const eventType = event.eventType;
@@ -130,7 +124,7 @@ export class EventStore implements IEventPublisher, IMessageSource {
     };
 
     try {
-      await this._client.subscribeToStream(
+      await this.client.subscribeToStream(
         streamName,
         onEvent,
         onDropped,
