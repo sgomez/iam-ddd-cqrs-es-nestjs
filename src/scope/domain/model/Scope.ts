@@ -1,5 +1,4 @@
-import { AggregateRoot } from "@nestjs/cqrs";
-
+import { AggregateRoot } from "../../../core/domain/models/aggregate-root";
 import { ScopeWasCreated, ScopeWasRemoved, ScopeWasRenamed } from "../event";
 import { ScopeAlias } from "./ScopeAlias";
 import { ScopeId } from "./ScopeId";
@@ -25,6 +24,10 @@ export class Scope extends AggregateRoot {
     scope.apply(new ScopeWasCreated(scopeId.value, name.value, alias.value));
 
     return scope;
+  }
+
+  public aggregateId(): string {
+    return this._scopeId.value;
   }
 
   get id(): ScopeId {

@@ -1,4 +1,4 @@
-import { shallowEqual } from 'shallow-equal-object';
+import { shallowEqual } from "shallow-equal-object";
 
 interface ValueObjectProps {
   [index: string]: any;
@@ -12,7 +12,7 @@ export abstract class ValueObject<T extends ValueObjectProps> {
   }
 
   public equals(other: ValueObject<T>): boolean {
-    if (typeof this !== typeof other) {
+    if (this.constructor !== other.constructor) {
       return false;
     }
 

@@ -1,15 +1,15 @@
-import { v4 as uuid } from 'uuid';
-import { version } from 'uuid-validate';
+import { v4 as uuid } from "uuid";
+import { version } from "uuid-validate";
 
-import { ValueObject } from '../../../core/ddd/ValueObject';
+import { Id } from "../../../core/domain/models/id";
 
 interface Props {
   value: string;
 }
 
-export class ScopeId extends ValueObject<Props> {
+export class ScopeId extends Id {
   static generate(): ScopeId {
-    return new ScopeId({ value: uuid() });
+    return new ScopeId(uuid());
   }
 
   public static fromString(id: string): ScopeId {
@@ -17,7 +17,7 @@ export class ScopeId extends ValueObject<Props> {
       throw new Error('Invalid Id');
     }
 
-    return new ScopeId({ value: id });
+    return new ScopeId(id);
   }
 
   get value(): string {

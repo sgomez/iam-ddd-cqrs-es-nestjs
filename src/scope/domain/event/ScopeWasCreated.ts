@@ -1,4 +1,4 @@
-import { DomainEvent } from '../../../core/ddd/DomainEvent';
+import { DomainEvent } from "../../../core/domain/models/domain-event";
 
 export class ScopeWasCreated implements DomainEvent {
   constructor(
