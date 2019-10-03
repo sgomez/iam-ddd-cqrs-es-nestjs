@@ -1,7 +1,7 @@
-import uuid = require("uuid");
+import uuid = require('uuid');
 
-import { AggregateRoot } from "./aggregate-root";
-import { Id } from "./id";
+import { AggregateRoot } from './aggregate-root';
+import { Id } from './id';
 
 describe('AggregateRoot', () => {
   it('creates an aggregate root', () => {

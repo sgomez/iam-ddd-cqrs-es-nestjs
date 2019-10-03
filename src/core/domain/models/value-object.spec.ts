@@ -1,4 +1,4 @@
-import { ValueObject } from "./value-object";
+import { ValueObject } from './value-object';
 
 describe('ValueObject', () => {
   it('creates a value object with one attribute', () => {

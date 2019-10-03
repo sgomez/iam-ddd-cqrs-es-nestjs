@@ -1,4 +1,4 @@
-import { AggregateRoot as BaseAggregateRoot } from "@nestjs/cqrs";
+import { AggregateRoot as BaseAggregateRoot } from '@nestjs/cqrs';
 
 export abstract class AggregateRoot extends BaseAggregateRoot {
   public abstract aggregateId(): string;

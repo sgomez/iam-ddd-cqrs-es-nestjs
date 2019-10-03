@@ -1,7 +1,7 @@
-import uuid = require("uuid");
+import uuid = require('uuid');
 
-import { InvalidIdError } from "../exceptions/invalid-id-error";
-import { Id } from "./id";
+import { InvalidIdError } from '../exceptions/invalid-id-error';
+import { Id } from './id';
 
 describe('Id', () => {
   it('creates a id value object', () => {
