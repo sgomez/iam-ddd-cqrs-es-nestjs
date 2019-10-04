@@ -1,19 +1,13 @@
-import { Inject } from '@nestjs/common';
-import { CommandHandler, EventPublisher, ICommandHandler } from '@nestjs/cqrs';
-import { Model } from 'mongoose';
+import { Inject } from "@nestjs/common";
+import { CommandHandler, EventPublisher, ICommandHandler } from "@nestjs/cqrs";
+import { Model } from "mongoose";
 
-import {
-  ScopeAliasAlreadyRegisteredException,
-  ScopeIdAlreadyRegisteredException,
-} from '../../domain/exception';
-import { Scope, ScopeAlias, ScopeId, ScopeName } from '../../domain/model';
-import { SCOPES } from '../../domain/repository';
-import { ScopeEventStore } from '../../infrastructure/eventstore/ScopesEventStore';
-import {
-  SCOPE_MODEL,
-  ScopeView,
-} from '../../infrastructure/read-model/schema/ScopeSchema';
-import { CreateScopeCommand } from '../command';
+import { ScopeAliasAlreadyRegisteredException, ScopeIdAlreadyRegisteredException } from "../../domain/exception";
+import { Scope, ScopeAlias, ScopeId, ScopeName } from "../../domain/model";
+import { SCOPES } from "../../domain/repository";
+import { ScopeEventStore } from "../../infrastructure/eventstore/ScopesEventStore";
+import { SCOPE_MODEL, ScopeView } from "../../infrastructure/read-model/schema/ScopeSchema";
+import { CreateScopeCommand } from "../command";
 
 @CommandHandler(CreateScopeCommand)
 export class CreateScopeHandler implements ICommandHandler<CreateScopeCommand> {

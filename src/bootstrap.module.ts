@@ -1,6 +1,9 @@
-import { Module } from '@nestjs/common';
+import { Module, OnModuleInit } from '@nestjs/common';
+import { CqrsModule, EventBus } from '@nestjs/cqrs';
 import { ConfigModule } from 'nestjs-config';
 import * as path from 'path';
+
+import { EventStore, EventStoreModule } from './core/eventstore';
 
 @Module({
   imports: [
@@ -10,6 +13,19 @@ import * as path from 'path';
         modifyConfigName: name => name.replace('.config', ''),
       },
     ),
+    CqrsModule,
+    EventStoreModule.forRoot(),
   ],
 })
-export class BootstrapModule {}
+export class BootstrapModule implements OnModuleInit {
+  constructor(
+    private readonly event$: EventBus,
+    private readonly eventStore: EventStore,
+  ) {}
+
+  onModuleInit() {
+    /** ------------ */
+    this.eventStore.bridgeEventsTo((this.event$ as any).subject$);
+    this.event$.publisher = this.eventStore;
+  }
+}

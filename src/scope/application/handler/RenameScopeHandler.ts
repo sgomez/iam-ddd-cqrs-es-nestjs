@@ -1,17 +1,13 @@
-import { Inject } from '@nestjs/common';
-import { CommandHandler, EventPublisher, ICommandHandler } from '@nestjs/cqrs';
-import { Model } from 'mongoose';
+import { Inject } from "@nestjs/common";
+import { CommandHandler, EventPublisher, ICommandHandler } from "@nestjs/cqrs";
+import { Model } from "mongoose";
 
-import { ScopeIdNotFoundException } from '../../domain/exception/ScopeIdNotFoundException';
-import { ScopeId } from '../../domain/model/ScopeId';
-import { ScopeName } from '../../domain/model/ScopeName';
-import { SCOPES } from '../../domain/repository';
-import { ScopeEventStore } from '../../infrastructure/eventstore/ScopesEventStore';
-import {
-  SCOPE_MODEL,
-  ScopeView,
-} from '../../infrastructure/read-model/schema/ScopeSchema';
-import { RenameScopeCommand } from '../command';
+import { ScopeIdNotFoundException } from "../../domain/exception/ScopeIdNotFoundException";
+import { ScopeId, ScopeName } from "../../domain/model";
+import { SCOPES } from "../../domain/repository";
+import { ScopeEventStore } from "../../infrastructure/eventstore/ScopesEventStore";
+import { SCOPE_MODEL, ScopeView } from "../../infrastructure/read-model/schema/ScopeSchema";
+import { RenameScopeCommand } from "../command";
 
 @CommandHandler(RenameScopeCommand)
 export class RenameScopeHandler implements ICommandHandler<RenameScopeCommand> {

@@ -7,12 +7,6 @@ export class EventStoreModule {
   static forRoot(): DynamicModule {
     return {
       module: EventStoreModule,
-    };
-  }
-
-  static forFeature(): DynamicModule {
-    return {
-      module: EventStoreModule,
       providers: [EventStore, ...eventStoreProviders],
       exports: [EventStore, ...eventStoreProviders],
     };

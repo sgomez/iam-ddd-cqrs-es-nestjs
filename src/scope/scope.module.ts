@@ -14,7 +14,7 @@ import { ScopeProviders } from './scope.providers';
 
 @Module({
   controllers: [ScopeController],
-  imports: [CqrsModule, DatabaseModule, EventStoreModule.forFeature()],
+  imports: [CqrsModule, DatabaseModule, EventStoreModule.forRoot()],
   providers: [
     ...CommandHandlers,
     ...ProjectionHandlers,

@@ -1,19 +1,16 @@
-import { CqrsModule, EventPublisher } from '@nestjs/cqrs';
-import { Test, TestingModule } from '@nestjs/testing';
-import { v4 as uuid } from 'uuid';
+import { CqrsModule, EventPublisher } from "@nestjs/cqrs";
+import { Test, TestingModule } from "@nestjs/testing";
+import { v4 as uuid } from "uuid";
 
-import { BootstrapModule } from '../../../bootstrap.module';
-import { EventStoreModule } from '../../../core/eventstore/eventstore.module';
-import { ScopeIdNotFoundException } from '../../domain/exception/ScopeIdNotFoundException';
-import { Scope } from '../../domain/model/Scope';
-import { ScopeAlias } from '../../domain/model/ScopeAlias';
-import { ScopeId } from '../../domain/model/ScopeId';
-import { ScopeName } from '../../domain/model/ScopeName';
-import { SCOPES } from '../../domain/repository';
-import { ScopeEventStore } from '../../infrastructure/eventstore/ScopesEventStore';
-import { SCOPE_MODEL } from '../../infrastructure/read-model/schema/ScopeSchema';
-import { RenameScopeCommand } from '../command/RenameScopeCommand';
-import { RenameScopeHandler } from './RenameScopeHandler';
+import { BootstrapModule } from "../../../bootstrap.module";
+import { EventStoreModule } from "../../../core/eventstore/eventstore.module";
+import { ScopeIdNotFoundException } from "../../domain/exception/ScopeIdNotFoundException";
+import { Scope, ScopeAlias, ScopeId, ScopeName } from "../../domain/model";
+import { SCOPES } from "../../domain/repository";
+import { ScopeEventStore } from "../../infrastructure/eventstore/ScopesEventStore";
+import { SCOPE_MODEL } from "../../infrastructure/read-model/schema/ScopeSchema";
+import { RenameScopeCommand } from "../command/RenameScopeCommand";
+import { RenameScopeHandler } from "./RenameScopeHandler";
 
 describe('RenameScopeHandler', () => {
   let eventPublisher$: EventPublisher;
@@ -36,7 +33,7 @@ describe('RenameScopeHandler', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      imports: [CqrsModule, EventStoreModule.forFeature(), BootstrapModule],
+      imports: [CqrsModule, EventStoreModule.forRoot(), BootstrapModule],
       providers: [
         RenameScopeHandler,
         {
