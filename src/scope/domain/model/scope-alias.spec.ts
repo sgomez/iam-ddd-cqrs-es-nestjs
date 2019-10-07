@@ -1,4 +1,4 @@
-import { ScopeAlias } from './ScopeAlias';
+import { ScopeAlias } from './scope-alias';
 
 describe('ScopeAlias', () => {
   it('should be a string', () => {

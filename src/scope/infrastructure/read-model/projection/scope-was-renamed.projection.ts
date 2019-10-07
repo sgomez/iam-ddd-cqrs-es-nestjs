@@ -3,7 +3,7 @@ import { EventsHandler, IEventHandler } from '@nestjs/cqrs';
 import { Model } from 'mongoose';
 
 import { ScopeWasRenamed } from '../../../domain/event';
-import { ScopeView } from '../schema/ScopeSchema';
+import { ScopeView } from '../schema/scope.schema';
 
 @EventsHandler(ScopeWasRenamed)
 export class ScopeWasRenamedProjection

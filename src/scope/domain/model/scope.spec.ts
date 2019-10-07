@@ -3,10 +3,10 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { v4 } from 'uuid';
 
 import { ScopeWasCreated, ScopeWasRemoved, ScopeWasRenamed } from '../event';
-import { Scope } from './Scope';
-import { ScopeAlias } from './ScopeAlias';
-import { ScopeId } from './ScopeId';
-import { ScopeName } from './ScopeName';
+import { Scope } from './scope';
+import { ScopeAlias } from './scope-alias';
+import { ScopeId } from './scope-id';
+import { ScopeName } from './scope-name';
 
 describe('Scope', () => {
   let scope: Scope;

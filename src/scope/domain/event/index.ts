@@ -1,6 +1,6 @@
-import { ScopeWasCreated } from './ScopeWasCreated';
-import { ScopeWasRemoved } from './ScopeWasRemoved';
-import { ScopeWasRenamed } from './ScopeWasRenamed';
+import { ScopeWasCreated } from './scope-was-created.event';
+import { ScopeWasRemoved } from './scope-was-removed.event';
+import { ScopeWasRenamed } from './scope-was-renamed.event';
 
 export { ScopeWasCreated, ScopeWasRenamed, ScopeWasRemoved };
 

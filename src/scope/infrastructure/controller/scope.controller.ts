@@ -14,13 +14,15 @@ import {
 import { ApiOperation, ApiResponse, ApiUseTags } from '@nestjs/swagger';
 
 import {
-  ScopeIdAlreadyRegisteredException,
-  ScopeIdNotFoundException,
+  ScopeIdAlreadyRegisteredError,
+  ScopeIdNotFoundError,
 } from '../../domain/exception';
-import { ScopeAliasAlreadyRegisteredException } from '../../domain/exception/ScopeAliasAlreadyRegisteredException';
+import {
+  ScopeAliasAlreadyRegisteredError,
+} from '../../domain/exception/scope-alias-already-registered.error';
 import { RenameScopeDto, ScopeDto } from '../dto';
-import { ScopeView } from '../read-model/schema/ScopeSchema';
-import { ScopeService } from '../service/ScopeService';
+import { ScopeView } from '../read-model/schema/scope.schema';
+import { ScopeService } from '../service/scope.service';
 
 @ApiUseTags('Scopes')
 @Controller('scopes')
@@ -46,9 +48,9 @@ export class ScopeController {
         scopeDto.alias,
       );
     } catch (e) {
-      if (e instanceof ScopeIdAlreadyRegisteredException) {
+      if (e instanceof ScopeIdAlreadyRegisteredError) {
         throw new ConflictException(e.message);
-      } else if (e instanceof ScopeAliasAlreadyRegisteredException) {
+      } else if (e instanceof ScopeAliasAlreadyRegisteredError) {
         throw new ConflictException(e.message);
       } else if (e instanceof Error) {
         throw new BadRequestException(`Unexpected error: ${e.message}`);
@@ -66,7 +68,7 @@ export class ScopeController {
     try {
       return await this.scopeService.getScope(id);
     } catch (e) {
-      if (e instanceof ScopeIdNotFoundException) {
+      if (e instanceof ScopeIdNotFoundError) {
         throw new NotFoundException('Scope not found');
       } else if (e instanceof Error) {
         throw new BadRequestException(`Unexpected error: ${e.message}`);
@@ -85,7 +87,7 @@ export class ScopeController {
     try {
       return await this.scopeService.renameScope(id, scopeDto.name);
     } catch (e) {
-      if (e instanceof ScopeIdNotFoundException) {
+      if (e instanceof ScopeIdNotFoundError) {
         throw new NotFoundException('Scope not found');
       } else if (e instanceof Error) {
         throw new BadRequestException(`Unexpected error: ${e.message}`);
@@ -104,7 +106,7 @@ export class ScopeController {
     try {
       return await this.scopeService.removeScope(id);
     } catch (e) {
-      if (e instanceof ScopeIdNotFoundException) {
+      if (e instanceof ScopeIdNotFoundError) {
         throw new NotFoundException('Scope not found');
       } else if (e instanceof Error) {
         throw new BadRequestException(`Unexpected error: ${e.message}`);

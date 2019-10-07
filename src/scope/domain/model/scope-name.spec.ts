@@ -1,4 +1,4 @@
-import { ScopeName } from './ScopeName';
+import { ScopeName } from './scope-name';
 
 describe('ScopeName', () => {
   it('should be a string', () => {

@@ -1,2 +1,2 @@
-export * from './RenameScopeDto';
-export * from './ScopeDto';
+export * from './rename-scope.dto';
+export * from './scope.dto';

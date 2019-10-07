@@ -1,8 +1,8 @@
 import { AggregateRoot } from '../../../core/domain/models/aggregate-root';
 import { ScopeWasCreated, ScopeWasRemoved, ScopeWasRenamed } from '../event';
-import { ScopeAlias } from './ScopeAlias';
-import { ScopeId } from './ScopeId';
-import { ScopeName } from './ScopeName';
+import { ScopeAlias } from './scope-alias';
+import { ScopeId } from './scope-id';
+import { ScopeName } from './scope-name';
 
 export class Scope extends AggregateRoot {
   private _scopeId: ScopeId;

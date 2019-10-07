@@ -7,7 +7,7 @@ import {
   RemoveScopeCommand,
   RenameScopeCommand,
 } from '../../application/command';
-import { SCOPE_MODEL, ScopeView } from '../read-model/schema/ScopeSchema';
+import { SCOPE_MODEL, ScopeView } from '../read-model/schema/scope.schema';
 
 @Injectable()
 export class ScopeService {

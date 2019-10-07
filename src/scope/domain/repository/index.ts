@@ -1,3 +1,3 @@
-export * from './Scopes';
+export * from './scopes';
 
 export const SCOPES = 'SCOPES';
