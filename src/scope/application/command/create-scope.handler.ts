@@ -1,3 +1,7 @@
+import {
+  AggregateRepository,
+  InjectAggregateRepository,
+} from '@aulasoftwarelibre/nestjs-eventstore';
 import { Inject } from '@nestjs/common';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 
@@ -6,7 +10,6 @@ import {
   ScopeIdAlreadyRegisteredError,
 } from '../../domain/exception';
 import { Scope, ScopeAlias, ScopeId, ScopeName } from '../../domain/model';
-import { SCOPES, Scopes } from '../../domain/repository';
 import {
   CHECK_UNIQUE_SCOPE_ALIAS,
   CheckUniqueScopeAlias,
@@ -16,7 +19,8 @@ import { CreateScopeCommand } from './create-scope.command';
 @CommandHandler(CreateScopeCommand)
 export class CreateScopeHandler implements ICommandHandler<CreateScopeCommand> {
   constructor(
-    @Inject(SCOPES) private readonly scopes: Scopes,
+    @InjectAggregateRepository(Scope)
+    private readonly scopes: AggregateRepository<Scope, ScopeId>,
     @Inject(CHECK_UNIQUE_SCOPE_ALIAS)
     private readonly checkUniqueScopeAlias: CheckUniqueScopeAlias,
   ) {}

@@ -7,7 +7,8 @@ import { ScopeView } from '../schema/scope.schema';
 
 @EventsHandler(ScopeWasRemoved)
 export class ScopeWasRemovedProjection
-  implements IEventHandler<ScopeWasRemoved> {
+  implements IEventHandler<ScopeWasRemoved>
+{
   constructor(
     @Inject('SCOPE_MODEL') private readonly scopeModel: Model<ScopeView>,
   ) {}
@@ -15,6 +16,6 @@ export class ScopeWasRemovedProjection
   async handle(event: ScopeWasRemoved) {
     const scopeView = await this.scopeModel.findById(event.id).exec();
 
-    scopeView.remove();
+    await scopeView.remove();
   }
 }

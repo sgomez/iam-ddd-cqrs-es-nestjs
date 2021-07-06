@@ -7,12 +7,15 @@ import { ScopeView } from '../schema/scope.schema';
 
 @EventsHandler(ScopeWasRenamed)
 export class ScopeWasRenamedProjection
-  implements IEventHandler<ScopeWasRenamed> {
+  implements IEventHandler<ScopeWasRenamed>
+{
   constructor(
     @Inject('SCOPE_MODEL') private readonly scopeModel: Model<ScopeView>,
   ) {}
 
   async handle(event: ScopeWasRenamed) {
-    this.scopeModel.updateOne({ _id: event.id }, { name: event.name }).exec();
+    await this.scopeModel
+      .updateOne({ _id: event.id }, { name: event.name })
+      .exec();
   }
 }

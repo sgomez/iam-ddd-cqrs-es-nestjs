@@ -1,17 +1,20 @@
-import { Inject } from '@nestjs/common';
+import {
+  AggregateRepository,
+  InjectAggregateRepository,
+} from '@aulasoftwarelibre/nestjs-eventstore';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 
-import {
-  ScopeIdNotFoundError,
-} from '../../domain/exception/scope-id-not-found.error';
+import { ScopeIdNotFoundError } from '../../domain/exception/scope-id-not-found.error';
 import { Scope } from '../../domain/model';
 import { ScopeId } from '../../domain/model/scope-id';
-import { SCOPES, Scopes } from '../../domain/repository';
 import { RemoveScopeCommand } from './remove-scope.command';
 
 @CommandHandler(RemoveScopeCommand)
 export class RemoveScopeHandler implements ICommandHandler<RemoveScopeCommand> {
-  constructor(@Inject(SCOPES) private readonly scopes: Scopes) {}
+  constructor(
+    @InjectAggregateRepository(Scope)
+    private readonly scopes: AggregateRepository<Scope, ScopeId>,
+  ) {}
 
   async execute(command: RemoveScopeCommand) {
     const scopeId = ScopeId.fromString(command.scopeId);

@@ -1,32 +1,48 @@
-import { Module, OnModuleInit } from '@nestjs/common';
+import { Event, EventStoreModule } from '@aulasoftwarelibre/nestjs-eventstore';
+import { Module } from '@nestjs/common';
 import { CqrsModule } from '@nestjs/cqrs';
 
 import { DatabaseModule } from '../../core/database/database.module';
-import { EventStore } from '../../core/eventstore/eventstore';
-import { EventStoreModule } from '../../core/eventstore/eventstore.module';
 import { CommandHandlers } from '../application/command';
-import { scopeEventHandlers } from '../domain/event';
+import { CreateScopeDto } from '../application/dto/request/create-scope.dto';
+import { RemoveScopeDto } from '../application/dto/request/remove-scope.dto';
+import {
+  DomainEvents,
+  ScopeWasCreated,
+  ScopeWasRemoved,
+  ScopeWasRenamed,
+} from '../domain/event';
+import { Scope } from '../domain/model';
 import { ScopeController } from './controller/scope.controller';
-import { ScopeEventStore } from './eventstore/scopes.event-store';
+import { RenameScopeDto } from './dto';
 import { ProjectionHandlers } from './read-model/projection';
 import { ScopeProviders } from './scope.provider';
 import { ScopeService } from './service/scope.service';
 
 @Module({
   controllers: [ScopeController],
-  imports: [CqrsModule, DatabaseModule, EventStoreModule.forRoot()],
+  imports: [
+    CqrsModule,
+    DatabaseModule,
+    EventStoreModule.forFeature([Scope], {
+      ScopeWasCreated: (event: Event<CreateScopeDto>) =>
+        new ScopeWasCreated(
+          event.payload.id,
+          event.payload.name,
+          event.payload.alias,
+        ),
+      ScopeWasRenamed: (event: Event<RenameScopeDto>) =>
+        new ScopeWasRenamed(event.payload.id, event.payload.name),
+      ScopeWasRemoved: (event: Event<RemoveScopeDto>) =>
+        new ScopeWasRemoved(event.payload.id),
+    }),
+  ],
   providers: [
     ...CommandHandlers,
+    ...DomainEvents,
     ...ProjectionHandlers,
     ...ScopeProviders,
     ScopeService,
-    ScopeEventStore,
   ],
 })
-export class ScopeModule implements OnModuleInit {
-  constructor(private readonly eventStore: EventStore) {}
-
-  onModuleInit() {
-    this.eventStore.addEventHandlers(scopeEventHandlers);
-  }
-}
+export class ScopeModule {}

@@ -1,31 +1,32 @@
-import { Module, OnModuleInit } from '@nestjs/common';
-import { CqrsModule, EventBus } from '@nestjs/cqrs';
-import { ConfigModule } from 'nestjs-config';
-import * as path from 'path';
+import { EventStoreModule } from '@aulasoftwarelibre/nestjs-eventstore';
+import { Module } from '@nestjs/common';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { CqrsModule } from '@nestjs/cqrs';
+import { ConsoleModule } from 'nestjs-console';
 
-import { EventStore, EventStoreModule } from './core/eventstore';
+import configuration from './config/configuration';
 
 @Module({
   imports: [
-    ConfigModule.load(
-      path.resolve(__dirname, 'config/**/!(*.d).config.{ts,js}'),
-      {
-        modifyConfigName: name => name.replace('.config', ''),
-      },
-    ),
+    ConfigModule.forRoot({
+      envFilePath: [
+        `.env.${process.env.NODE_ENV}.local`,
+        `.env.${process.env.NODE_ENV}`,
+        '.env.local',
+        '.env',
+      ],
+      isGlobal: true,
+      load: [configuration],
+    }),
+    ConsoleModule,
     CqrsModule,
-    EventStoreModule.forRoot(),
+    EventStoreModule.forRootAsync({
+      useFactory: (configService: ConfigService) => ({
+        category: configService.get('eventstore.category'),
+        connection: configService.get('eventstore.connection'),
+      }),
+      inject: [ConfigService],
+    }),
   ],
 })
-export class BootstrapModule implements OnModuleInit {
-  constructor(
-    private readonly event$: EventBus,
-    private readonly eventStore: EventStore,
-  ) {}
-
-  onModuleInit() {
-    /** ------------ */
-    this.eventStore.bridgeEventsTo((this.event$ as any).subject$);
-    this.event$.publisher = this.eventStore;
-  }
-}
+export class BootstrapModule {}

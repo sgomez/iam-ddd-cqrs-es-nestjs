@@ -1,11 +1,5 @@
+import { Id } from '@aulasoftwarelibre/nestjs-eventstore';
 import { v4 as uuid } from 'uuid';
-import { version } from 'uuid-validate';
-
-import { Id } from '../../../core/domain/models/id';
-
-interface Props {
-  value: string;
-}
 
 export class ScopeId extends Id {
   static generate(): ScopeId {
@@ -13,10 +7,6 @@ export class ScopeId extends Id {
   }
 
   public static fromString(id: string): ScopeId {
-    if (version(id) !== 4) {
-      throw new Error('Invalid Id');
-    }
-
     return new ScopeId(id);
   }
 

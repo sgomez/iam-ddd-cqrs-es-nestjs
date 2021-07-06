@@ -1,16 +1,19 @@
-import { Inject } from '@nestjs/common';
+import {
+  AggregateRepository,
+  InjectAggregateRepository,
+} from '@aulasoftwarelibre/nestjs-eventstore';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 
-import {
-  ScopeIdNotFoundError,
-} from '../../domain/exception/scope-id-not-found.error';
+import { ScopeIdNotFoundError } from '../../domain/exception/scope-id-not-found.error';
 import { Scope, ScopeId, ScopeName } from '../../domain/model';
-import { SCOPES, Scopes } from '../../domain/repository';
 import { RenameScopeCommand } from './rename-scope.command';
 
 @CommandHandler(RenameScopeCommand)
 export class RenameScopeHandler implements ICommandHandler<RenameScopeCommand> {
-  constructor(@Inject(SCOPES) private readonly scopes: Scopes) {}
+  constructor(
+    @InjectAggregateRepository(Scope)
+    private readonly scopes: AggregateRepository<Scope, ScopeId>,
+  ) {}
 
   async execute(command: RenameScopeCommand) {
     const scopeId = ScopeId.fromString(command.scopeId);
@@ -22,6 +25,7 @@ export class RenameScopeHandler implements ICommandHandler<RenameScopeCommand> {
     }
 
     scope.rename(name);
+
     this.scopes.save(scope);
   }
 }
