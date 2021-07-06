@@ -1,5 +1,9 @@
-import { DomainEvent } from '../../../core/domain/models/domain-event';
+import { Event } from '@aulasoftwarelibre/nestjs-eventstore';
 
-export class ScopeWasRenamed implements DomainEvent {
-  constructor(public readonly id: string, public readonly name: string) {}
+import { RenameScopeDto } from '../../infrastructure/dto';
+
+export class ScopeWasRenamed extends Event<RenameScopeDto> {
+  constructor(public readonly id: string, public readonly name: string) {
+    super({ id, name });
+  }
 }

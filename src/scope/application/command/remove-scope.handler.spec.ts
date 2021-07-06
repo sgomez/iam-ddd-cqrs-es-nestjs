@@ -1,9 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { v4 as uuid } from 'uuid';
 
-import {
-  ScopeIdNotFoundError,
-} from '../../domain/exception/scope-id-not-found.error';
+import { ScopeIdNotFoundError } from '../../domain/exception/scope-id-not-found.error';
 import { Scope, ScopeAlias, ScopeId, ScopeName } from '../../domain/model';
 import { SCOPES, Scopes } from '../../domain/repository';
 import { RemoveScopeCommand } from './remove-scope.command';

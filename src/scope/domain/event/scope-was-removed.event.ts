@@ -1,5 +1,9 @@
-import { DomainEvent } from '../../../core/domain/models/domain-event';
+import { Event } from '@aulasoftwarelibre/nestjs-eventstore';
 
-export class ScopeWasRemoved implements DomainEvent {
-  constructor(public readonly id: string) {}
+import { RemoveScopeDto } from '../../application/dto/request/remove-scope.dto';
+
+export class ScopeWasRemoved extends Event<RemoveScopeDto> {
+  constructor(public readonly id: string) {
+    super({ id });
+  }
 }

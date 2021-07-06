@@ -7,36 +7,35 @@ import {
   Get,
   HttpCode,
   NotFoundException,
+  Param,
   Post,
   Put,
   Query,
 } from '@nestjs/common';
-import { ApiOperation, ApiResponse, ApiUseTags } from '@nestjs/swagger';
+import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 
 import {
   ScopeIdAlreadyRegisteredError,
   ScopeIdNotFoundError,
 } from '../../domain/exception';
-import {
-  ScopeAliasAlreadyRegisteredError,
-} from '../../domain/exception/scope-alias-already-registered.error';
+import { ScopeAliasAlreadyRegisteredError } from '../../domain/exception/scope-alias-already-registered.error';
 import { RenameScopeDto, ScopeDto } from '../dto';
 import { ScopeView } from '../read-model/schema/scope.schema';
 import { ScopeService } from '../service/scope.service';
 
-@ApiUseTags('Scopes')
+@ApiTags('Scopes')
 @Controller('scopes')
 export class ScopeController {
   constructor(private readonly scopeService: ScopeService) {}
 
-  @ApiOperation({ title: 'Get Scopes' })
+  @ApiOperation({ summary: 'Get Scopes' })
   @ApiResponse({ status: 200, description: 'Get Scopes.' })
   @Get()
   async getScopes(): Promise<ScopeView[]> {
     return this.scopeService.getScopes();
   }
 
-  @ApiOperation({ title: 'Create Scope' })
+  @ApiOperation({ summary: 'Create Scope' })
   @ApiResponse({ status: 204, description: 'Create Scope.' })
   @HttpCode(204)
   @Post()
@@ -60,11 +59,11 @@ export class ScopeController {
     }
   }
 
-  @ApiOperation({ title: 'Get Scope' })
+  @ApiOperation({ summary: 'Get Scope' })
   @ApiResponse({ status: 204, description: 'Get Scope.' })
   @ApiResponse({ status: 404, description: 'Not found' })
   @Get(':id')
-  async getScope(@Query('id') id: string): Promise<ScopeView> {
+  async getScope(@Param('id') id: string): Promise<ScopeView> {
     try {
       return await this.scopeService.getScope(id);
     } catch (e) {
@@ -78,12 +77,12 @@ export class ScopeController {
     }
   }
 
-  @ApiOperation({ title: 'Rename Scope' })
+  @ApiOperation({ summary: 'Rename Scope' })
   @ApiResponse({ status: 204, description: 'Rename scope' })
   @ApiResponse({ status: 404, description: 'Not found' })
   @HttpCode(204)
   @Put(':id')
-  async renameScope(@Query('id') id: string, @Body() scopeDto: RenameScopeDto) {
+  async renameScope(@Param('id') id: string, @Body() scopeDto: RenameScopeDto) {
     try {
       return await this.scopeService.renameScope(id, scopeDto.name);
     } catch (e) {
@@ -97,7 +96,7 @@ export class ScopeController {
     }
   }
 
-  @ApiOperation({ title: 'Delete Scope' })
+  @ApiOperation({ summary: 'Delete Scope' })
   @ApiResponse({ status: 204, description: 'Delete scope' })
   @ApiResponse({ status: 404, description: 'Not found' })
   @HttpCode(204)

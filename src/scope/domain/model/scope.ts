@@ -1,4 +1,5 @@
-import { AggregateRoot } from '../../../core/domain/models/aggregate-root';
+import { AggregateRoot } from '@aulasoftwarelibre/nestjs-eventstore';
+
 import { ScopeWasCreated, ScopeWasRemoved, ScopeWasRenamed } from '../event';
 import { ScopeAlias } from './scope-alias';
 import { ScopeId } from './scope-id';
@@ -9,10 +10,6 @@ export class Scope extends AggregateRoot {
   private _name: ScopeName;
   private _alias: ScopeAlias;
   private _isRemoved: boolean;
-
-  private constructor() {
-    super();
-  }
 
   public static add(
     scopeId: ScopeId,
@@ -70,7 +67,7 @@ export class Scope extends AggregateRoot {
   }
 
   private onScopeWasRenamed(event: ScopeWasRenamed) {
-    this._name = ScopeName.fromString(event.name);
+    this._name = ScopeName.fromString(event.payload.name);
   }
 
   private onScopeWasRemoved(event: ScopeWasRemoved) {

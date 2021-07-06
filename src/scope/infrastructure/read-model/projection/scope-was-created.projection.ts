@@ -7,7 +7,8 @@ import { ScopeView } from '../schema/scope.schema';
 
 @EventsHandler(ScopeWasCreated)
 export class ScopeWasCreatedProjection
-  implements IEventHandler<ScopeWasCreated> {
+  implements IEventHandler<ScopeWasCreated>
+{
   constructor(
     @Inject('SCOPE_MODEL') private readonly scopeModel: Model<ScopeView>,
   ) {}
@@ -19,6 +20,8 @@ export class ScopeWasCreatedProjection
       alias: event.alias,
     });
 
-    return scopeView.save();
+    const scope = await scopeView.save();
+
+    return scope;
   }
 }
