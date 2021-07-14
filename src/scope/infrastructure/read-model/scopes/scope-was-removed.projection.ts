@@ -1,16 +1,20 @@
-import { Inject } from '@nestjs/common';
 import { EventsHandler, IEventHandler } from '@nestjs/cqrs';
+import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 
 import { ScopeWasRemoved } from '../../../domain/event';
-import { ScopeView } from '../schema/scope.schema';
+import { ScopeDocument, SCOPES_PROJECTION } from './scope.schema';
 
 @EventsHandler(ScopeWasRemoved)
 export class ScopeWasRemovedProjection
   implements IEventHandler<ScopeWasRemoved>
 {
+  public get scopeModel(): Model<ScopeDocument> {
+    return this._scopeModel;
+  }
   constructor(
-    @Inject('SCOPE_MODEL') private readonly scopeModel: Model<ScopeView>,
+    @InjectModel(SCOPES_PROJECTION)
+    private readonly _scopeModel: Model<ScopeDocument>,
   ) {}
 
   async handle(event: ScopeWasRemoved) {
