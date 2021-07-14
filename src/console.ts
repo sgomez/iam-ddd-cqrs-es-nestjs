@@ -3,7 +3,7 @@ import { BootstrapConsole } from 'nestjs-console';
 import { AppModule } from './app.module';
 
 const bootstrap = new BootstrapConsole({
-  module: AppModule.forRoot(),
+  module: AppModule,
   useDecorators: true,
 });
 bootstrap.init().then(async (app) => {
