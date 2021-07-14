@@ -1,20 +1,22 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
+import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 
 import { ScopeAlias, ScopeId } from '../../domain/model';
 import { CheckUniqueScopeAlias } from '../../domain/services/check-unique-scope-alias.service';
-import { SCOPE_MODEL, ScopeView } from '../read-model/schema/scope.schema';
+import { ScopeDocument, SCOPES_PROJECTION } from '../read-model';
 
 @Injectable()
 export class CheckUniqueScopeAliasFromReadModel
   implements CheckUniqueScopeAlias
 {
   constructor(
-    @Inject(SCOPE_MODEL) private readonly scopeModel: Model<ScopeView>,
+    @InjectModel(SCOPES_PROJECTION)
+    private readonly scopes: Model<ScopeDocument>,
   ) {}
 
   async with(alias: ScopeAlias): Promise<ScopeId> {
-    const scopeView = await this.scopeModel.findOne({ alias: alias.value });
+    const scopeView = await this.scopes.findOne({ alias: alias.value });
 
     if (scopeView === null) {
       return null;
