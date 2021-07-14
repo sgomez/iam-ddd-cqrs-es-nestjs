@@ -27,12 +27,24 @@ services:
     image: mongo:latest
     ports:
       - 27017:27017
+    volumes:
+      - type: volume
+        source: mongo-volume-data
+        target: /data/db
 
-  mongo-express:
-    image: mongo-express
+  mongoclient:
+    image: mongoclient/mongoclient
     ports:
-      - 8081:8081
+      - 3000:3000
+    volumes:
+      - type: volume
+        source: mongoclient-volume-data
+        target: /data/db
+    environment:
+      - MONGO_URL=mongodb://mongo:27017/mongoclient
 
 volumes:
   eventstore-volume-data:
   eventstore-volume-logs:
+  mongo-volume-data:
+  mongoclient-volume-data:
