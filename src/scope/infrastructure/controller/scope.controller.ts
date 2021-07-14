@@ -19,8 +19,7 @@ import {
   ScopeIdNotFoundError,
 } from '../../domain/exception';
 import { ScopeAliasAlreadyRegisteredError } from '../../domain/exception/scope-alias-already-registered.error';
-import { RenameScopeDto, ScopeDto } from '../dto';
-import { ScopeView } from '../read-model/schema/scope.schema';
+import { CreateScopeDto, RenameScopeDto, ScopeDto } from '../../dto';
 import { ScopeService } from '../service/scope.service';
 
 @ApiTags('Scopes')
@@ -31,18 +30,18 @@ export class ScopeController {
   @ApiOperation({ summary: 'Get Scopes' })
   @ApiResponse({ status: 200, description: 'Get Scopes.' })
   @Get()
-  async getScopes(): Promise<ScopeView[]> {
-    return this.scopeService.getScopes();
+  async getScopes(): Promise<ScopeDto[]> {
+    return await this.scopeService.getScopes();
   }
 
   @ApiOperation({ summary: 'Create Scope' })
   @ApiResponse({ status: 204, description: 'Create Scope.' })
   @HttpCode(204)
   @Post()
-  async createScope(@Body() scopeDto: ScopeDto): Promise<ScopeDto> {
+  async createScope(@Body() scopeDto: CreateScopeDto): Promise<ScopeDto> {
     try {
       return await this.scopeService.createScope(
-        scopeDto.id,
+        scopeDto._id,
         scopeDto.name,
         scopeDto.alias,
       );
@@ -63,7 +62,7 @@ export class ScopeController {
   @ApiResponse({ status: 204, description: 'Get Scope.' })
   @ApiResponse({ status: 404, description: 'Not found' })
   @Get(':id')
-  async getScope(@Param('id') id: string): Promise<ScopeView> {
+  async getScope(@Param('id') id: string): Promise<ScopeDto> {
     try {
       return await this.scopeService.getScope(id);
     } catch (e) {
