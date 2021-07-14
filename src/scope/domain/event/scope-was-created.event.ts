@@ -1,6 +1,6 @@
 import { Event } from '@aulasoftwarelibre/nestjs-eventstore';
 
-import { CreateScopeDto } from '../../application/dto/request/create-scope.dto';
+import { CreateScopeDto } from '../../dto';
 
 export class ScopeWasCreated extends Event<CreateScopeDto> {
   constructor(
@@ -8,6 +8,6 @@ export class ScopeWasCreated extends Event<CreateScopeDto> {
     public readonly name: string,
     public readonly alias: string,
   ) {
-    super({ id, name, alias });
+    super(id, { _id: id, name, alias });
   }
 }

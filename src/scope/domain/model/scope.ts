@@ -70,6 +70,7 @@ export class Scope extends AggregateRoot {
     this._name = ScopeName.fromString(event.payload.name);
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   private onScopeWasRemoved(event: ScopeWasRemoved) {
     this._isRemoved = true;
   }

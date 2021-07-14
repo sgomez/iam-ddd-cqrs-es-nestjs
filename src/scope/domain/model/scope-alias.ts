@@ -6,7 +6,7 @@ interface Props {
 
 export class ScopeAlias extends ValueObject<Props> {
   public static fromString(alias: string): ScopeAlias {
-    if (!/^[a-z][a-z0-9\-]*$/.test(alias)) {
+    if (!/^[a-z][a-z0-9\-]+$/.test(alias)) {
       throw new Error('Invalid alias');
     }
 
